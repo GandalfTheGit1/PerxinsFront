@@ -23,7 +23,8 @@ export const serviceSlice = createSlice({
       const { serviceId, serviceLikes } = action.payload;
       const serviceMapped = state.map(service => {
         if (service._id === serviceId) {
-          service.numberOfLikes = serviceLikes;
+          // Return a new object for the updated service to ensure immutability
+          return { ...service, numberOfLikes: serviceLikes };
         }
         return service;
       });

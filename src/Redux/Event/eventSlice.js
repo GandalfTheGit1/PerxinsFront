@@ -14,7 +14,8 @@ const eventSlice = createSlice({
       const { serviceId, serviceLikes } = action.payload;
       const eventMapped = state.map(event => {
         if (event._id === serviceId) {
-          event.numberOfLikes = serviceLikes;
+          // Return a new object for the updated event to ensure immutability
+          return { ...event, numberOfLikes: serviceLikes };
         }
         return event;
       });

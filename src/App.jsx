@@ -37,18 +37,39 @@ const Admin = React.lazy(() => import('./pages/Admin'));
 const ExcelUpload = React.lazy(() => import("./pages/Admin/ExcelUpload"))
 const Share = React.lazy(() => import("./pages/Admin/Share"))
 function App() {
-  // Initialize authState with mock user data
-  const [authState, setAuthState] = useState({
-    _id: mockUsers[0]._id,
-    username: mockUsers[0].name,
-    email: mockUsers[0].email,
-    userPicture: mockUsers[0].profilePicture,
-    actualProvince: "La Habana", // Example mock data
-    musicalTastes: "Pop", // Example mock data
-    subscriptions: mockServices.slice(0, 1).map(s => ({ _id: s._id, name: s.name, type: s.category })), // Example mock subscriptions
-    isOwner: mockUsers[0].isOwner, // Example mock data
-    role: mockUsers[0].role,
-    status: true,
+  const [authState, setAuthState] = useState(() => {
+    const storedUser = localStorage.getItem('authUser');
+    const storedUserId = localStorage.getItem('userId');
+    const storedAccessToken = localStorage.getItem('accessToken');
+
+    if (storedUser && storedUserId && storedAccessToken) {
+      const parsedUser = JSON.parse(storedUser);
+      return {
+        _id: parsedUser._id,
+        username: parsedUser.name,
+        email: parsedUser.email,
+        userPicture: parsedUser.profilePicture,
+        actualProvince: parsedUser.actualProvince,
+        musicalTastes: parsedUser.musicalTastes,
+        subscriptions: parsedUser.subscriptions, // Assuming this is part of storedUser
+        isOwner: parsedUser.isOwner,
+        role: parsedUser.role,
+        status: true, // Assuming logged in if token and user exist
+      };
+    }
+    // Default initial state if no user in localStorage (e.g., first mock user)
+    return {
+      _id: mockUsers[0]._id,
+      username: mockUsers[0].name,
+      email: mockUsers[0].email,
+      userPicture: mockUsers[0].profilePicture,
+      actualProvince: mockUsers[0].actualProvince || "La Habana",
+      musicalTastes: mockUsers[0].musicalTastes || "Pop",
+      subscriptions: mockServices.slice(0, 1).map(s => ({ _id: s._id, name: s.name, type: s.category })),
+      isOwner: mockUsers[0].isOwner,
+      role: mockUsers[0].role,
+      status: true,
+    };
   });
   const [isNotificationPanelOpen, setIsNotificationPanelOpen] = useState(false)
   const [profileMenuStatus, setProfileMenuStatus] = useState(false)

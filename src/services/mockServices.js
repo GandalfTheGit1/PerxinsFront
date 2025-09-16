@@ -134,7 +134,21 @@ class MockService {
     await this.delay();
     const index = this.data.findIndex(item => item._id === id);
     if (index === -1) throw new Error(`${this.entity} not found`);
-    this.data[index] = { ...this.data[index], ...data, updatedAt: new Date().toISOString() };
+
+    if (this.entity === 'users') {
+      const user = mockUsers.find(u => u._id === id);
+      if (user) {
+        Object.assign(user, data);
+        user.updatedAt = new Date().toISOString();
+        localStorage.setItem(`mock_users`, JSON.stringify(mockUsers));
+      }
+    } else if (this.entity === 'services' || this.entity === 'events') {
+      const item = this.data[index];
+      Object.assign(item, data);
+      item.updatedAt = new Date().toISOString();
+    } else {
+      this.data[index] = { ...this.data[index], ...data, updatedAt: new Date().toISOString() };
+    }
     this.saveData();
     // Simulate cascading, e.g., update related offers
     if (this.entity === 'services' ) {
@@ -147,11 +161,44 @@ class MockService {
     await this.delay();
     const index = this.data.findIndex(item => item._id === id);
     if (index === -1) throw new Error(`${this.entity} not found`);
+    
+    let itemToDelete = this.data[index];
     this.data.splice(index, 1);
     this.saveData();
-    // Simulate cascading, e.g., delete related reservations
+    
+    // Simulate cascading deletions
     if (this.entity === 'services') {
       this.deleteRelated('reservations', id);
+      // Remove service from owner's servicesOwned
+      const owner = mockUsers.find(u => u._id === itemToDelete.UserId);
+      if (owner) {
+        owner.servicesOwned = owner.servicesOwned.filter(serviceId => serviceId !== id);
+        localStorage.setItem(`mock_users`, JSON.stringify(mockUsers));
+      }
+      // Delete associated likes
+      const likesService = new MockService('likes');
+      likesService.data = likesService.data.filter(like => like.serviceId !== id);
+      likesService.saveData();
+      // Delete associated messages
+      const messagesService = new MockService('messages');
+      messagesService.data = messagesService.data.filter(message => message.serviceId !== id);
+      messagesService.saveData();
+      
+    } else if (this.entity === 'events') {
+      // Remove event from owner's eventsOwned
+      const owner = mockUsers.find(u => u._id === itemToDelete.UserId);
+      if (owner) {
+        owner.eventsOwned = owner.eventsOwned.filter(eventId => eventId !== id);
+        localStorage.setItem(`mock_users`, JSON.stringify(mockUsers));
+      }
+      // Delete associated likes
+      const likesService = new MockService('likes');
+      likesService.data = likesService.data.filter(like => like.eventId !== id);
+      likesService.saveData();
+      // Delete associated messages
+      const messagesService = new MockService('messages');
+      messagesService.data = messagesService.data.filter(message => message.eventId !== id);
+      messagesService.saveData();
     }
     return { success: true };
   }

@@ -262,41 +262,21 @@ export const createMockEvent = (data, userId) => ({
   updatedAt: new Date().toISOString(),
 });
 
-let initialMockServices = [
+const defaultMockServicesData = [
   {
     _id: 'service1',
     name: 'Web Development Services',
     description: 'Professional web development for small businesses and startups. From simple landing pages to complex e-commerce solutions.',
     category: 'WebDev',
-    location: { province: 'La Habana', township: 'Vedado' },
-    exactDirection: {
-      principalStreet: 'Calle 23',
-      firstMiddleStreet: 'Entre A y B',
-      secondMiddleStreet: 'Entre C y D',
-      number: '456',
-      googleLink: 'https://maps.google.com/?q=23.123,-82.456',
-    },
+    location: { province: 'La Habana', township: 'Vedado' }, // Old field, will be mapped
     price: 'Negotiable',
     images: ['/Bar AA.jpeg', '/Bar Invictus.jpeg'],
     secondaryImages: ['/Bar Invictus.jpeg'],
     principalImage: '/Bar AA.jpeg',
-    time: {
-      startHour: '09:00',
-      exitHour: '18:00',
-    },
-    contact: {
-      email: 'bob.johnson@example.com',
-      phone: '+1-555-123-4567',
-      facebook: 'https://facebook.com/bobjohnson',
-      twitter: 'https://twitter.com/bobjohnson',
-      instagram: 'https://instagram.com/bobjohnson',
-      webSite: 'https://bobjohnson.com',
-      pageFootersName: 'PERXINS',
-    },
     ownerId: 'user2',
     events: [],
     numberOfLikes: 5,
-    rating: 4.8,
+    rating: 4.8, // Old field, will be mapped
     reviews: [
       { userId: 'user1', comment: 'Excellent service, very professional!', rating: 5, createdAt: '2024-06-01T10:00:00Z' },
       { userId: 'user3', comment: 'Delivered on time and exceeded expectations.', rating: 5, createdAt: '2024-07-15T14:30:00Z' },
@@ -310,35 +290,15 @@ let initialMockServices = [
     name: 'Graphic Design & Branding',
     description: 'Creative graphic design services for logos, branding, marketing materials, and social media content.',
     category: 'Design',
-    location: { province: 'La Habana', township: 'Playa' },
-    exactDirection: {
-      principalStreet: 'Calle 12',
-      firstMiddleStreet: 'Entre E y F',
-      secondMiddleStreet: 'Entre G y H',
-      number: '789',
-      googleLink: 'https://maps.google.com/?q=23.456,-82.789',
-    },
+    location: { province: 'La Habana', township: 'Playa' }, // Old field, will be mapped
     price: '$50/hour',
     images: ['/Lord of The Rings - Cine Yara.jpg', '/Star Wars - Cine Chaplin.jpg'],
     secondaryImages: ['/Star Wars - Cine Chaplin.jpg'],
     principalImage: '/Lord of The Rings - Cine Yara.jpg',
-    time: {
-      startHour: '08:00',
-      exitHour: '20:00',
-    },
-    contact: {
-      email: 'alice.smith@example.com',
-      phone: '+1-555-987-6543',
-      facebook: 'https://facebook.com/alicesmith',
-      twitter: 'https://twitter.com/alicesmith',
-      instagram: 'https://instagram.com/alicesmith',
-      webSite: 'https://alicesmith.com',
-      pageFootersName: 'PERXINS',
-    },
     ownerId: 'user1',
     events: [],
     numberOfLikes: 3,
-    rating: 4.5,
+    rating: 4.5, // Old field, will be mapped
     reviews: [
       { userId: 'user2', comment: 'Great eye for detail and very responsive.', rating: 4, createdAt: '2024-02-10T12:20:00Z' },
       { userId: 'user4', comment: 'Beautiful designs that captured our brand perfectly.', rating: 5, createdAt: '2024-05-05T16:00:00Z' },
@@ -351,35 +311,15 @@ let initialMockServices = [
     name: 'Photography Sessions',
     description: 'Professional photography for portraits, events, and product shoots. Capturing your moments beautifully.',
     category: 'Photography',
-    location: { province: 'Matanzas', township: 'Varadero' },
-    exactDirection: {
-      principalStreet: 'Avenida Varadero',
-      firstMiddleStreet: 'Entre 1ra y 2da',
-      secondMiddleStreet: 'Entre 3ra y 4ta',
-      number: '123',
-      googleLink: 'https://maps.google.com/?q=23.789,-82.123',
-    },
+    location: { province: 'Matanzas', township: 'Varadero' }, // Old field, will be mapped
     price: '$200/session',
     images: ['/Bar AA.jpeg', '/Lord of The Rings - Cine Yara.jpg'],
     secondaryImages: ['/Lord of The Rings - Cine Yara.jpg'],
     principalImage: '/Bar AA.jpeg',
-    time: {
-      startHour: '10:00',
-      exitHour: '22:00',
-    },
-    contact: {
-      email: 'charlie.brown@example.com',
-      phone: '+1-555-111-2222',
-      facebook: 'https://facebook.com/charliebrown',
-      twitter: 'https://twitter.com/charliebrown',
-      instagram: 'https://instagram.com/charliebrown',
-      webSite: 'https://charliebrown.com',
-      pageFootersName: 'PERXINS',
-    },
     ownerId: 'user3',
     events: [],
     numberOfLikes: 8,
-    rating: 4.9,
+    rating: 4.9, // Old field, will be mapped
     reviews: [
       { userId: 'user1', comment: 'Amazing photos, highly recommend!', rating: 5, createdAt: '2024-03-20T10:45:00Z' },
       { userId: 'user2', comment: 'Very creative and fun to work with.', rating: 5, createdAt: '2024-04-12T14:10:00Z' },
@@ -393,35 +333,15 @@ let initialMockServices = [
     name: 'Local Bar Services',
     description: 'Cozy bar offering cocktails and live music in a relaxed atmosphere.',
     category: 'Bar',
-    location: { province: 'La Habana', township: 'Centro Habana' },
-    exactDirection: {
-      principalStreet: 'Calle Obispo',
-      firstMiddleStreet: 'Entre Habana y Compostela',
-      secondMiddleStreet: 'Entre O\'Reilly y Lamparilla',
-      number: '555',
-      googleLink: 'https://maps.google.com/?q=23.135,-82.350',
-    },
+    location: { province: 'La Habana', township: 'Centro Habana' }, // Old field, will be mapped
     price: '$10/drink',
     images: ['/Bar Invictus.jpeg', '/Star Wars - Cine Chaplin.jpg'],
     secondaryImages: ['/Star Wars - Cine Chaplin.jpg'],
     principalImage: '/Bar Invictus.jpeg',
-    time: {
-      startHour: '18:00',
-      exitHour: '02:00',
-    },
-    contact: {
-      email: 'diana.wilson@example.com',
-      phone: '+1-555-333-4444',
-      facebook: 'https://facebook.com/dianawilson',
-      twitter: 'https://twitter.com/dianawilson',
-      instagram: 'https://instagram.com/dianawilson',
-      webSite: 'https://dianawilson.com',
-      pageFootersName: 'PERXINS',
-    },
     ownerId: 'user4',
     events: [],
     numberOfLikes: 12,
-    rating: 4.2,
+    rating: 4.2, // Old field, will be mapped
     reviews: [
       { userId: 'user3', comment: 'Great ambiance and drinks!', rating: 4, createdAt: '2024-07-01T20:00:00Z' },
       { userId: 'user5', comment: 'Live music was fantastic.', rating: 5, createdAt: '2024-08-10T21:30:00Z' },
@@ -434,35 +354,15 @@ let initialMockServices = [
     name: 'Event Planning',
     description: 'Full-service event planning for weddings, parties, and corporate events.',
     category: 'EventPlanning',
-    location: { province: 'La Habana', township: 'Miramar' },
-    exactDirection: {
-      principalStreet: '5ta Avenida',
-      firstMiddleStreet: 'Entre 24 y 26',
-      secondMiddleStreet: 'Entre 28 y 30',
-      number: '101',
-      googleLink: 'https://maps.google.com/?q=23.101,-82.101',
-    },
+    location: { province: 'La Habana', township: 'Miramar' }, // Old field, will be mapped
     price: '$500/event',
     images: ['/Bar AA.jpeg', '/Bar Invictus.jpeg'],
     secondaryImages: ['/Bar Invictus.jpeg'],
     principalImage: '/Bar AA.jpeg',
-    time: {
-      startHour: '09:00',
-      exitHour: '18:00',
-    },
-    contact: {
-      email: 'eve.davis@example.com',
-      phone: '+1-555-555-6666',
-      facebook: 'https://facebook.com/evedavis',
-      twitter: 'https://twitter.com/evedavis',
-      instagram: 'https://instagram.com/evedavis',
-      webSite: 'https://evedavis.com',
-      pageFootersName: 'PERXINS',
-    },
     ownerId: 'user5',
     events: [],
     numberOfLikes: 2,
-    rating: 4.7,
+    rating: 4.7, // Old field, will be mapped
     reviews: [
       { userId: 'user1', comment: 'Organized everything perfectly.', rating: 5, createdAt: '2024-05-15T13:00:00Z' },
     ],
@@ -474,35 +374,15 @@ let initialMockServices = [
     name: 'Restaurant Catering',
     description: 'Delicious catering services for events and private parties.',
     category: 'Restaurant',
-    location: { province: 'La Habana', township: 'Vedado' },
-    exactDirection: {
-      principalStreet: 'Calle Malecón',
-      firstMiddleStreet: 'Entre Prado y Neptuno',
-      secondMiddleStreet: 'Entre Genios y Virtudes',
-      number: '777',
-      googleLink: 'https://maps.google.com/?q=23.777,-82.777',
-    },
+    location: { province: 'La Habana', township: 'Vedado' }, // Old field, will be mapped
     price: '$30/person',
     images: ['/Lord of The Rings - Cine Yara.jpg', '/Star Wars - Cine Chaplin.jpg'],
     secondaryImages: ['/Star Wars - Cine Chaplin.jpg'],
     principalImage: '/Lord of The Rings - Cine Yara.jpg',
-    time: {
-      startHour: '11:00',
-      exitHour: '23:00',
-    },
-    contact: {
-      email: 'bob.johnson@example.com',
-      phone: '+1-555-777-8888',
-      facebook: 'https://facebook.com/bobjohnson',
-      twitter: 'https://twitter.com/bobjohnson',
-      instagram: 'https://instagram.com/bobjohnson',
-      webSite: 'https://bobjohnson.com',
-      pageFootersName: 'PERXINS',
-    },
     ownerId: 'user2',
     events: [],
     numberOfLikes: 7,
-    rating: 4.6,
+    rating: 4.6, // Old field, will be mapped
     reviews: [
       { userId: 'user4', comment: 'Food was amazing!', rating: 5, createdAt: '2024-06-20T18:00:00Z' },
     ],
@@ -514,35 +394,15 @@ let initialMockServices = [
     name: 'Music Lessons',
     description: 'Private music lessons for guitar, piano, and vocals.',
     category: 'Music',
-    location: { province: 'Matanzas', township: 'Varadero' },
-    exactDirection: {
-      principalStreet: 'Calle 1ra',
-      firstMiddleStreet: 'Entre 62 y 64',
-      secondMiddleStreet: 'Entre 66 y 68',
-      number: '999',
-      googleLink: 'https://maps.google.com/?q=23.999,-82.999',
-    },
+    location: { province: 'Matanzas', township: 'Varadero' }, // Old field, will be mapped
     price: '$40/hour',
     images: ['/Bar AA.jpeg', '/Lord of The Rings - Cine Yara.jpg'],
     secondaryImages: ['/Lord of The Rings - Cine Yara.jpg'],
     principalImage: '/Bar AA.jpeg',
-    time: {
-      startHour: '15:00',
-      exitHour: '20:00',
-    },
-    contact: {
-      email: 'charlie.brown@example.com',
-      phone: '+1-555-999-0000',
-      facebook: 'https://facebook.com/charliebrown',
-      twitter: 'https://twitter.com/charliebrown',
-      instagram: 'https://instagram.com/charliebrown',
-      webSite: 'https://charliebrown.com',
-      pageFootersName: 'PERXINS',
-    },
     ownerId: 'user3',
     events: [],
     numberOfLikes: 4,
-    rating: 4.3,
+    rating: 4.3, // Old field, will be mapped
     reviews: [
       { userId: 'user5', comment: 'Patient teacher, great progress.', rating: 4, createdAt: '2024-07-10T15:00:00Z' },
     ],
@@ -554,35 +414,15 @@ let initialMockServices = [
     name: 'Fitness Training',
     description: 'Personal training sessions for all fitness levels.',
     category: 'Fitness',
-    location: { province: 'La Habana', township: 'Playa' },
-    exactDirection: {
-      principalStreet: 'Calle 1ra',
-      firstMiddleStreet: 'Entre 0 y 2',
-      secondMiddleStreet: 'Entre 4 y 6',
-      number: '888',
-      googleLink: 'https://maps.google.com/?q=23.888,-82.888',
-    },
+    location: { province: 'La Habana', township: 'Playa' }, // Old field, will be mapped
     price: '$60/session',
     images: ['/Bar Invictus.jpeg', '/Star Wars - Cine Chaplin.jpg'],
     secondaryImages: ['/Star Wars - Cine Chaplin.jpg'],
     principalImage: '/Bar Invictus.jpeg',
-    time: {
-      startHour: '06:00',
-      exitHour: '21:00',
-    },
-    contact: {
-      email: 'alice.smith@example.com',
-      phone: '+1-555-222-3333',
-      facebook: 'https://facebook.com/alicesmith',
-      twitter: 'https://twitter.com/alicesmith',
-      instagram: 'https://instagram.com/alicesmith',
-      webSite: 'https://alicesmith.com',
-      pageFootersName: 'PERXINS',
-    },
     ownerId: 'user1',
     events: [],
     numberOfLikes: 6,
-    rating: 4.4,
+    rating: 4.4, // Old field, will be mapped
     reviews: [
       { userId: 'user2', comment: 'Motivating and effective workouts.', rating: 4, createdAt: '2024-08-01T09:00:00Z' },
       { userId: 'user3', comment: 'Helped me reach my goals.', rating: 5, createdAt: '2024-09-01T12:30:00Z' },
@@ -592,7 +432,7 @@ let initialMockServices = [
   },
 ];
 
-export const mockServices = initialMockServices.map(service => ({
+export let mockServices = defaultMockServicesData.map(service => ({
   ...createMockService(service, service.ownerId),
   ...service,
   exactDirection: {
@@ -612,21 +452,14 @@ export const mockServices = initialMockServices.map(service => ({
   UserId: service.ownerId, // Map ownerId to UserId
 }));
 
-let initialMockEvents = [
+const defaultMockEventsData = [
   {
     _id: 'event1',
     name: 'Summer Music Festival',
     description: 'An annual music festival featuring local and international artists across various genres. Food trucks, art installations, and good vibes!',
     date: '2025-08-15',
     time: '14:00',
-    location: { province: 'La Habana', township: 'Playa', address: 'Central Park' },
-    exactDirection: {
-      principalStreet: 'Calle Parque Central',
-      firstMiddleStreet: 'Entre Neptuno y Virtudes',
-      secondMiddleStreet: 'Entre Prado y Zulueta',
-      number: '100',
-      googleLink: 'https://maps.google.com/?q=23.135,-82.350',
-    },
+    location: { province: 'La Habana', township: 'Playa', address: 'Central Park' }, // Old field, will be mapped
     category: 'Concert',
     typeOfMusicPlayed: 'Pop',
     price: '$75',
@@ -636,7 +469,7 @@ let initialMockEvents = [
     organizerId: 'user3',
     attendees: ['user1', 'user2', 'user5'],
     numberOfLikes: 15,
-    rating: 4.9,
+    rating: 4.9, // Old field, will be mapped
     reviews: [
       { userId: 'user1', comment: 'Best festival ever!', rating: 5, createdAt: '2024-08-20T16:00:00Z' },
     ],
@@ -649,14 +482,7 @@ let initialMockEvents = [
     description: 'A two-day conference for tech enthusiasts, developers, and entrepreneurs. Featuring keynote speakers, workshops, and networking opportunities.',
     date: '2025-09-20',
     time: '09:00',
-    location: { province: 'La Habana', township: 'Vedado', address: 'Convention Center' },
-    exactDirection: {
-      principalStreet: 'Paseo',
-      firstMiddleStreet: 'Entre 23 y 25',
-      secondMiddleStreet: 'Entre 27 y 29',
-      number: '200',
-      googleLink: 'https://maps.google.com/?q=23.141,-82.361',
-    },
+    location: { province: 'La Habana', township: 'Vedado', address: 'Convention Center' }, // Old field, will be mapped
     category: 'Conference',
     typeOfMusicPlayed: 'N/A',
     price: '$299',
@@ -666,7 +492,7 @@ let initialMockEvents = [
     organizerId: 'user2',
     attendees: ['user1', 'user4'],
     numberOfLikes: 10,
-    rating: 4.7,
+    rating: 4.7, // Old field, will be mapped
     reviews: [
       { userId: 'user4', comment: 'Inspiring talks and great networking.', rating: 5, createdAt: '2024-09-25T13:30:00Z' },
     ],
@@ -679,14 +505,7 @@ let initialMockEvents = [
     description: 'Showcasing the works of emerging local artists. A diverse collection of paintings, sculptures, and digital art.',
     date: '2025-10-05',
     time: '18:00',
-    location: { province: 'Matanzas', township: 'Varadero', address: 'Art Gallery Downtown' },
-    exactDirection: {
-      principalStreet: 'Calle 59',
-      firstMiddleStreet: 'Entre 1ra y 3ra',
-      secondMiddleStreet: 'Entre 5ta y 7ma',
-      number: '300',
-      googleLink: 'https://maps.google.com/?q=23.200,-81.100',
-    },
+    location: { province: 'Matanzas', township: 'Varadero', address: 'Art Gallery Downtown' }, // Old field, will be mapped
     category: 'Exhibition',
     typeOfMusicPlayed: 'Jazz',
     price: 'Free',
@@ -696,7 +515,7 @@ let initialMockEvents = [
     organizerId: 'user1',
     attendees: ['user3', 'user5'],
     numberOfLikes: 7,
-    rating: 4.6,
+    rating: 4.6, // Old field, will be mapped
     reviews: [
       { userId: 'user5', comment: 'Incredible artwork on display.', rating: 5, createdAt: '2024-10-10T19:00:00Z' },
     ],
@@ -709,14 +528,7 @@ let initialMockEvents = [
     description: 'Fun beach party with DJ, games, and sunset views.',
     date: '2025-07-30',
     time: '18:00',
-    location: { province: 'Matanzas', township: 'Varadero', address: 'Varadero Beach' },
-    exactDirection: {
-      principalStreet: 'Playa Varadero',
-      firstMiddleStreet: 'Entre 11 y 12',
-      secondMiddleStreet: 'Entre 13 y 14',
-      number: '400',
-      googleLink: 'https://maps.google.com/?q=23.300,-81.200',
-    },
+    location: { province: 'Matanzas', township: 'Varadero', address: 'Varadero Beach' }, // Old field, will be mapped
     category: 'Party',
     typeOfMusicPlayed: 'Hip Hop',
     price: '$20',
@@ -726,7 +538,7 @@ let initialMockEvents = [
     organizerId: 'user4',
     attendees: ['user2', 'user5'],
     numberOfLikes: 9,
-    rating: 4.4,
+    rating: 4.4, // Old field, will be mapped
     reviews: [
       { userId: 'user2', comment: 'Awesome party atmosphere.', rating: 4, createdAt: '2024-08-05T21:00:00Z' },
     ],
@@ -739,14 +551,7 @@ let initialMockEvents = [
     description: 'Live jazz performance in an intimate venue.',
     date: '2025-11-10',
     time: '20:00',
-    location: { province: 'La Habana', township: 'Centro Habana', address: 'Jazz Club' },
-    exactDirection: {
-      principalStreet: 'Calle O\'Reilly',
-      firstMiddleStreet: 'Entre Cuba y Aguiar',
-      secondMiddleStreet: 'Entre Obrapía y Muralla',
-      number: '555',
-      googleLink: 'https://maps.google.com/?q=23.135,-82.350',
-    },
+    location: { province: 'La Habana', township: 'Centro Habana', address: 'Jazz Club' }, // Old field, will be mapped
     category: 'Concert',
     typeOfMusicPlayed: 'Jazz',
     price: '$50',
@@ -756,7 +561,7 @@ let initialMockEvents = [
     organizerId: 'user3',
     attendees: ['user1'],
     numberOfLikes: 11,
-    rating: 4.8,
+    rating: 4.8, // Old field, will be mapped
     reviews: [],
     createdAt: '2024-05-10T19:45:00Z',
     updatedAt: '2024-09-13T20:30:00Z',
@@ -767,14 +572,7 @@ let initialMockEvents = [
     description: 'Hands-on workshop on digital marketing strategies.',
     date: '2025-12-05',
     time: '10:00',
-    location: { province: 'La Habana', township: 'Miramar', address: 'Conference Room' },
-    exactDirection: {
-      principalStreet: '5ta Avenida',
-      firstMiddleStreet: 'Entre 84 y 86',
-      secondMiddleStreet: 'Entre 88 y 90',
-      number: '600',
-      googleLink: 'https://maps.google.com/?q=23.101,-82.101',
-    },
+    location: { province: 'La Habana', township: 'Miramar', address: 'Conference Room' }, // Old field, will be mapped
     category: 'Workshop',
     typeOfMusicPlayed: 'N/A',
     price: '$100',
@@ -784,7 +582,7 @@ let initialMockEvents = [
     organizerId: 'user2',
     attendees: ['user1', 'user4'],
     numberOfLikes: 6,
-    rating: 4.5,
+    rating: 4.5, // Old field, will be mapped
     reviews: [
       { userId: 'user1', comment: 'Learned a lot!', rating: 5, createdAt: '2024-12-10T11:00:00Z' },
     ],
@@ -797,14 +595,7 @@ let initialMockEvents = [
     description: 'Proyección de películas clásicas en el Cine Yara, con debate posterior.',
     date: '2025-10-20',
     time: '19:00',
-    location: { province: 'La Habana', township: 'Vedado', address: 'Cine Yara' },
-    exactDirection: {
-      principalStreet: 'Calle 23',
-      firstMiddleStreet: 'Entre L y M',
-      secondMiddleStreet: 'Entre N y O',
-      number: '700',
-      googleLink: 'https://maps.google.com/?q=23.123,-82.456',
-    },
+    location: { province: 'La Habana', township: 'Vedado', address: 'Cine Yara' }, // Old field, will be mapped
     category: 'Concert',
     typeOfMusicPlayed: 'N/A',
     price: '$10',
@@ -814,7 +605,7 @@ let initialMockEvents = [
     organizerId: 'user3',
     attendees: ['user1', 'user5'],
     numberOfLikes: 8,
-    rating: 4.7,
+    rating: 4.7, // Old field, will be mapped
     reviews: [
       { userId: 'user1', comment: 'Gran selección de películas clásicas.', rating: 5, createdAt: '2024-10-25T20:00:00Z' },
     ],
@@ -823,7 +614,7 @@ let initialMockEvents = [
   },
 ];
 
-export const mockEvents = initialMockEvents.map(event => ({
+export let mockEvents = defaultMockEventsData.map(event => ({
   ...createMockEvent(event, event.organizerId),
   ...event,
   // Map old location structure to new exactDirection
@@ -1052,10 +843,53 @@ const initialMockData = {
 
 export const initializeMockData = () => {
   if (typeof window !== 'undefined') {
+    // Helper to get default data, applying transformations if necessary
+    const getTransformedDefaultData = (entityName) => {
+      switch (entityName) {
+        case 'services':
+          return defaultMockServicesData.map(service => ({
+            ...createMockService(service, service.ownerId),
+            ...service,
+            exactDirection: {
+              province: service.location.province,
+              placeToSetEvent: service.location.township,
+              googleLink: service.exactDirection?.googleLink,
+            },
+            serviceQualityRating: service.reviews?.map(review => ({ userId: review.userId, rating: review.rating })) || [],
+            peopleServiceTreatmentRating: service.reviews?.map(review => ({ userId: review.userId, rating: review.rating })) || [],
+            pricingServiceRating: service.reviews?.map(review => ({ userId: review.userId, rating: review.rating })) || [],
+            avgServiceQualityRating: service.rating || 0,
+            avgPeopleServiceTreatmentRating: service.rating || 0,
+            avgPricingServiceRating: service.rating || 0,
+            contact: service.contact || {},
+            UserId: service.ownerId,
+          }));
+        case 'events':
+          return defaultMockEventsData.map(event => ({
+            ...createMockEvent(event, event.organizerId),
+            ...event,
+            exactDirection: {
+              province: event.location.province,
+              placeToSetEvent: event.location.address,
+              googleLink: event.exactDirection?.googleLink,
+            },
+            messages: event.reviews?.map(review => ({
+              userId: review.userId,
+              username: mockUsers.find(u => u._id === review.userId)?.name || 'Unknown',
+              picture: mockUsers.find(u => u._id === review.userId)?.profilePicture || '',
+              messages: review.comment,
+            })) || [],
+            numberOfMessages: event.reviews?.length || 0,
+            UserId: event.organizerId,
+          }));
+        default:
+          return initialMockData[entityName]; // For other entities, use direct initial data
+      }
+    };
+
     Object.keys(initialMockData).forEach(entityName => {
       const storedData = localStorage.getItem(`mock_${entityName}`);
       if (storedData) {
-        // Update the exported 'let' array directly
         switch (entityName) {
           case 'users': mockUsers = JSON.parse(storedData); break;
           case 'services': mockServices = JSON.parse(storedData); break;
@@ -1069,8 +903,21 @@ export const initializeMockData = () => {
           default: break;
         }
       } else {
-        // If no stored data, save the initial mock data to localStorage
-        localStorage.setItem(`mock_${entityName}`, JSON.stringify(initialMockData[entityName]));
+        const dataToStore = getTransformedDefaultData(entityName);
+        localStorage.setItem(`mock_${entityName}`, JSON.stringify(dataToStore));
+        // Also update the globally mutable array for immediate use
+        switch (entityName) {
+          case 'users': mockUsers = dataToStore; break;
+          case 'services': mockServices = dataToStore; break;
+          case 'events': mockEvents = dataToStore; break;
+          case 'businessOffers': mockBusinessOffers = dataToStore; break;
+          case 'likes': mockLikes = dataToStore; break;
+          case 'reservations': mockReservations = dataToStore; break;
+          case 'messages': mockMessages = dataToStore; break;
+          case 'notifications': mockNotifications = dataToStore; break;
+          case 'polls': mockPolls = dataToStore; break;
+          default: break;
+        }
       }
     });
   }

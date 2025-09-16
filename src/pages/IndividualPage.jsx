@@ -1,6 +1,6 @@
 import { Dialog } from '@mui/material/';
 import React, { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 //import GoogleMaps from '../Components/GoogleMaps';
 import { AuthContext } from '../helpers/AuthContext';
 import useCheckToken from '../Hooks/useCheckToken';
@@ -25,6 +25,13 @@ import DialogSection from './IndividualPages/Sections/DialogSection';
 import EventsSection from './IndividualPages/Sections/EventsSection';
 
 function IndividualPage({serviceOrEvent}) {
+  const location = useLocation();
+  console.log('=== IndividualPage mounted ===');
+  console.log('Current pathname:', location.pathname);
+  console.log('Props serviceOrEvent:', serviceOrEvent);
+  const params = useParams();
+  console.log('useParams():', params);
+  console.log('Expected ID from URL:', params.id);
     const [numberOfUsersRating, setNumberOfUsersRating] = useState(0)
 
     const [individualService, setIndividualService] = useState({
@@ -130,6 +137,7 @@ function IndividualPage({serviceOrEvent}) {
         setOpenLoadingBackdrop(true);
         console.log('=== IndividualPage useEffect started ===');
         console.log('Params:', { id, serviceOrEvent });
+        console.log('Full location:', location);
         // setApiCall("get",`http://localhost:3001/${serviceOrEvent}s/${id}`)
         // .then(response=>{
         //     if(serviceOrEvent === "service"){
@@ -190,6 +198,8 @@ function IndividualPage({serviceOrEvent}) {
         console.log('=== useEffect ended ===');
     }, [id, serviceOrEvent])
     console.log('IndividualPage rendered. Current individualService state:', individualService ? { name: individualService.name, _id: individualService._id, loaded: !!individualService.name } : 'Empty');
+    console.log('Mock services length:', mockServices.length);
+    console.log('Searching for ID in mockServices:', mockServices.find(s => s._id === id));
     console.log('IndividualPage rendered. Current individualService state:', individualService ? { name: individualService.name, _id: individualService._id, loaded: !!individualService.name } : 'Empty');
     const searchIcon = (individualService) => {
         let iconsRef = "";

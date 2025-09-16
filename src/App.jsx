@@ -262,11 +262,19 @@ const [searchServiceDialogOpen, setSearchServiceDialogOpen] = useState(false)
               <IndividualPage
               serviceOrEvent={"service"} />
             </Route>
+            <Route path="/individual-page/:id" exact >
+              <IndividualPage
+              serviceOrEvent={"service"} />
+            </Route>
             <Route path="/individual-page/service/:id" exact >
               <IndividualPage
               serviceOrEvent={"service"} />
             </Route>
             <Route path="/event/:id" exact >
+              <IndividualPage
+              serviceOrEvent={"event"} />
+            </Route>
+            <Route path="/individual-page/event/:id" exact >
               <IndividualPage
               serviceOrEvent={"event"} />
             </Route>

@@ -1,4 +1,4 @@
-export const mockUsers = [
+export let mockUsers = [
   {
     _id: 'user1',
     name: 'Alice Smith',
@@ -843,7 +843,7 @@ export const mockEvents = initialMockEvents.map(event => ({
   UserId: event.organizerId, // Map organizerId to UserId
 }));
 
-export const mockBusinessOffers = [
+export let mockBusinessOffers = [
   {
     _id: 'offer1',
     name: 'Startup Web Package',
@@ -887,7 +887,7 @@ export const mockBusinessOffers = [
 ];
 
 // New: Mock likes (many-to-many user-service/event)
-export const mockLikes = [
+export let mockLikes = [
   { _id: 'like1', userId: 'user1', serviceId: 'service1', liked: true, createdAt: '2024-08-01T10:00:00Z' },
   { _id: 'like2', userId: 'user2', serviceId: 'service3', liked: true, createdAt: '2024-08-05T14:30:00Z' },
   { _id: 'like3', userId: 'user5', eventId: 'event1', liked: true, createdAt: '2024-08-10T16:00:00Z' },
@@ -900,7 +900,7 @@ export const mockLikes = [
 ];
 
 // New: Mock reservations (user-service/event relationship)
-export const mockReservations = [
+export let mockReservations = [
   {
     _id: 'res1',
     userId: 'user1',
@@ -955,7 +955,7 @@ export const mockReservations = [
 ];
 
 // New: Mock messages as flat array with serviceId/eventId
-export const mockMessages = [
+export let mockMessages = [
   // Messages for service1
   { _id: 'msg1', serviceId: 'service1', fromUserId: 'user1', toUserId: 'user2', content: 'Interested in your web dev services. Can we discuss details?', timestamp: '2024-09-01T10:00:00Z' },
   { _id: 'msg2', serviceId: 'service1', fromUserId: 'user2', toUserId: 'user1', content: 'Sure, available for a call tomorrow?', timestamp: '2024-09-01T10:30:00Z' },
@@ -969,7 +969,7 @@ export const mockMessages = [
 ];
 
 // New: Mock notifications (per user)
-export const mockNotifications = [
+export let mockNotifications = [
   {
     _id: 'notif1',
     userId: 'user1',
@@ -1019,7 +1019,7 @@ export const mockNotifications = [
 ];
 
 // New: Mock polls (support feature)
-export const mockPolls = [
+export let mockPolls = [
   {
     _id: 'poll1',
     question: 'What type of events do you prefer?',
@@ -1037,3 +1037,60 @@ export const mockPolls = [
     updatedAt: '2024-09-13T17:20:00Z',
   },
 ];
+
+const initialMockData = {
+  users: mockUsers,
+  services: mockServices,
+  events: mockEvents,
+  businessOffers: mockBusinessOffers,
+  likes: mockLikes,
+  reservations: mockReservations,
+  messages: mockMessages,
+  notifications: mockNotifications,
+  polls: mockPolls,
+};
+
+export const initializeMockData = () => {
+  if (typeof window !== 'undefined') {
+    Object.keys(initialMockData).forEach(entityName => {
+      const storedData = localStorage.getItem(`mock_${entityName}`);
+      if (storedData) {
+        // Update the exported 'let' array directly
+        switch (entityName) {
+          case 'users': mockUsers = JSON.parse(storedData); break;
+          case 'services': mockServices = JSON.parse(storedData); break;
+          case 'events': mockEvents = JSON.parse(storedData); break;
+          case 'businessOffers': mockBusinessOffers = JSON.parse(storedData); break;
+          case 'likes': mockLikes = JSON.parse(storedData); break;
+          case 'reservations': mockReservations = JSON.parse(storedData); break;
+          case 'messages': mockMessages = JSON.parse(storedData); break;
+          case 'notifications': mockNotifications = JSON.parse(storedData); break;
+          case 'polls': mockPolls = JSON.parse(storedData); break;
+          default: break;
+        }
+      } else {
+        // If no stored data, save the initial mock data to localStorage
+        localStorage.setItem(`mock_${entityName}`, JSON.stringify(initialMockData[entityName]));
+      }
+    });
+  }
+};
+
+export const saveMockEntityData = (entityName, data) => {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(`mock_${entityName}`, JSON.stringify(data));
+    // Also update the globally mutable array
+    switch (entityName) {
+      case 'users': mockUsers = data; break;
+      case 'services': mockServices = data; break;
+      case 'events': mockEvents = data; break;
+      case 'businessOffers': mockBusinessOffers = data; break;
+      case 'likes': mockLikes = data; break;
+      case 'reservations': mockReservations = data; break;
+      case 'messages': mockMessages = data; break;
+      case 'notifications': mockNotifications = data; break;
+      case 'polls': mockPolls = data; break;
+      default: break;
+    }
+  }
+};

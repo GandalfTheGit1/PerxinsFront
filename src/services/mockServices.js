@@ -1,5 +1,8 @@
 import getEnvironment from '../config/environment';
-import { mockUsers, mockServices, mockEvents, mockBusinessOffers, mockLikes, mockReservations, mockMessages, mockNotifications, mockPolls, createMockService, createMockEvent } from '../mockData.jsx';
+import { mockUsers, mockServices, mockEvents, mockBusinessOffers, mockLikes, mockReservations, mockMessages, mockNotifications, mockPolls, createMockService, createMockEvent, initializeMockData, saveMockEntityData } from '../mockData.jsx';
+
+// Initialize mock data when the service file is loaded
+initializeMockData();
 
 /**
  * Mock service implementation using localStorage persistence
@@ -8,36 +11,29 @@ class MockService {
   constructor(entity) {
     this.entity = entity;
     this.env = getEnvironment();
-    this.data = this.loadData();
+    // Reference the globally mutable data array directly
+    switch (entity) {
+      case 'users': this.data = mockUsers; break;
+      case 'services': this.data = mockServices; break;
+      case 'events': this.data = mockEvents; break;
+      case 'businessOffers': this.data = mockBusinessOffers; break;
+      case 'likes': this.data = mockLikes; break;
+      case 'reservations': this.data = mockReservations; break;
+      case 'messages': this.data = mockMessages; break;
+      case 'notifications': this.data = mockNotifications; break;
+      case 'polls': this.data = mockPolls; break;
+      default: this.data = []; break;
+    }
   }
 
   loadData() {
-    if (this.env.isDemo) {
-      const stored = localStorage.getItem(`mock_${this.entity}`);
-      if (stored) {
-        return JSON.parse(stored);
-      }
-    }
-    // Default data based on entity
-    switch (this.entity) {
-      case 'users':
-        const storedUsers = localStorage.getItem(`mock_users`);
-        return storedUsers ? JSON.parse(storedUsers) : mockUsers;
-      case 'services': return mockServices;
-      case 'events': return mockEvents;
-      case 'businessOffers': return mockBusinessOffers;
-      case 'likes': return mockLikes;
-      case 'reservations': return mockReservations;
-      case 'messages': return mockMessages;
-      case 'notifications': return mockNotifications;
-      case 'polls': return mockPolls;
-      default: return [];
-    }
+    // Data is loaded via initializeMockData at startup
+    return this.data;
   }
 
   saveData() {
     if (this.env.isDemo) {
-      localStorage.setItem(`mock_${this.entity}`, JSON.stringify(this.data));
+      saveMockEntityData(this.entity, this.data);
     }
   }
 
@@ -77,7 +73,7 @@ class MockService {
       const user = mockUsers.find(u => u._id === currentUserId);
       if (user) {
         user.servicesOwned.push(newItem._id);
-        localStorage.setItem(`mock_users`, JSON.stringify(mockUsers));
+        saveMockEntityData('users', mockUsers);
       }
       this.addNotification(currentUserId, `New service '${newItem.name}' created!`, newItem._id);
     } else if (this.entity === 'events') {
@@ -86,7 +82,7 @@ class MockService {
       const user = mockUsers.find(u => u._id === currentUserId);
       if (user) {
         user.eventsOwned.push(newItem._id);
-        localStorage.setItem(`mock_users`, JSON.stringify(mockUsers));
+        saveMockEntityData('users', mockUsers);
       }
       this.addNotification(currentUserId, `New event '${newItem.name}' created!`, newItem._id);
     } else if (this.entity === 'messages') {
@@ -110,7 +106,7 @@ class MockService {
         if (event) {
           event.messages.push(newItem._id);
           event.numberOfMessages = (event.numberOfMessages || 0) + 1;
-          eventService.saveData();
+          saveMockEntityData('events', eventService.data);
         }
       } else if (data.serviceId) {
         const serviceService = new MockService('services');
@@ -118,7 +114,7 @@ class MockService {
         if (service) {
           service.messages.push(newItem._id);
           service.numberOfMessages = (service.numberOfMessages || 0) + 1;
-          serviceService.saveData();
+          saveMockEntityData('services', serviceService.data);
         }
       }
       this.addNotification(user._id, `New comment posted by ${user.name}!`, newItem._id);
@@ -134,26 +130,24 @@ class MockService {
     await this.delay();
     const index = this.data.findIndex(item => item._id === id);
     if (index === -1) throw new Error(`${this.entity} not found`);
-
+    
     if (this.entity === 'users') {
       const user = mockUsers.find(u => u._id === id);
       if (user) {
         Object.assign(user, data);
         user.updatedAt = new Date().toISOString();
-        localStorage.setItem(`mock_users`, JSON.stringify(mockUsers));
+        saveMockEntityData('users', mockUsers);
       }
     } else if (this.entity === 'services' || this.entity === 'events') {
       const item = this.data[index];
       Object.assign(item, data);
       item.updatedAt = new Date().toISOString();
+      this.saveData(); // Save changes for services/events
     } else {
       this.data[index] = { ...this.data[index], ...data, updatedAt: new Date().toISOString() };
+      this.saveData();
     }
-    this.saveData();
     // Simulate cascading, e.g., update related offers
-    if (this.entity === 'services' ) {
-      // Update businessOffers if needed
-    }
     return this.data[index];
   }
 
@@ -173,32 +167,32 @@ class MockService {
       const owner = mockUsers.find(u => u._id === itemToDelete.UserId);
       if (owner) {
         owner.servicesOwned = owner.servicesOwned.filter(serviceId => serviceId !== id);
-        localStorage.setItem(`mock_users`, JSON.stringify(mockUsers));
+        saveMockEntityData('users', mockUsers);
       }
       // Delete associated likes
       const likesService = new MockService('likes');
       likesService.data = likesService.data.filter(like => like.serviceId !== id);
-      likesService.saveData();
+      saveMockEntityData('likes', likesService.data);
       // Delete associated messages
       const messagesService = new MockService('messages');
       messagesService.data = messagesService.data.filter(message => message.serviceId !== id);
-      messagesService.saveData();
+      saveMockEntityData('messages', messagesService.data);
       
     } else if (this.entity === 'events') {
       // Remove event from owner's eventsOwned
       const owner = mockUsers.find(u => u._id === itemToDelete.UserId);
       if (owner) {
         owner.eventsOwned = owner.eventsOwned.filter(eventId => eventId !== id);
-        localStorage.setItem(`mock_users`, JSON.stringify(mockUsers));
+        saveMockEntityData('users', mockUsers);
       }
       // Delete associated likes
       const likesService = new MockService('likes');
       likesService.data = likesService.data.filter(like => like.eventId !== id);
-      likesService.saveData();
+      saveMockEntityData('likes', likesService.data);
       // Delete associated messages
       const messagesService = new MockService('messages');
       messagesService.data = messagesService.data.filter(message => message.eventId !== id);
-      messagesService.saveData();
+      saveMockEntityData('messages', messagesService.data);
     }
     return { success: true };
   }
@@ -217,13 +211,13 @@ class MockService {
     // Append to notifications data
     const notifService = new MockService('notifications');
     notifService.data.unshift(newNotif);
-    notifService.saveData();
+    saveMockEntityData('notifications', notifService.data);
   }
 
   deleteRelated(entity, relatedId) {
     const relatedService = new MockService(entity);
     relatedService.data = relatedService.data.filter(item => item.serviceId !== relatedId && item.eventId !== relatedId);
-    relatedService.saveData();
+    saveMockEntityData(entity, relatedService.data);
   }
 
   // Like specific logic
@@ -243,8 +237,14 @@ class MockService {
       } else {
         item.numberOfLikes++;
       }
-      itemService.saveData();
+      saveMockEntityData(itemEntity, itemService.data);
       this.saveData();
+      // Update user's givenLikes
+      const user = mockUsers.find(u => u._id === userId);
+      if (user) {
+        user.givenLikes = user.givenLikes.filter(likeId => likeId !== itemId);
+        saveMockEntityData('users', mockUsers);
+      }
       return existingLike;
     } else {
       const newLike = {
@@ -256,9 +256,15 @@ class MockService {
       };
       likes.push(newLike);
       item.numberOfLikes++;
-      itemService.saveData();
+      saveMockEntityData(itemEntity, itemService.data);
       this.saveData();
-      this.addNotification(item.UserId || item.organizerId, `${userId} liked your ${type}`, itemId);
+      // Update user's givenLikes
+      const user = mockUsers.find(u => u._id === userId);
+      if (user) {
+        user.givenLikes.push(itemId);
+        saveMockEntityData('users', mockUsers);
+      }
+      this.addNotification(item.UserId, `${userId} liked your ${type}`, itemId);
       return newLike;
     }
   }
@@ -293,14 +299,14 @@ likes.toggleLike = async (userId, itemId, type) => {
       const user = mockUsers.find(u => u._id === userId);
       if (user) {
         user.givenLikes = user.givenLikes.filter(likeId => likeId !== itemId);
-        localStorage.setItem(`mock_users`, JSON.stringify(mockUsers));
+        saveMockEntityData('users', mockUsers);
       }
     } else {
       // Add to user's givenLikes
       const user = mockUsers.find(u => u._id === userId);
       if (user) {
         user.givenLikes.push(itemId);
-        localStorage.setItem(`mock_users`, JSON.stringify(mockUsers));
+        saveMockEntityData('users', mockUsers);
       }
     }
   } else {
@@ -319,7 +325,7 @@ likes.toggleLike = async (userId, itemId, type) => {
     const user = mockUsers.find(u => u._id === userId);
     if (user) {
       user.givenLikes.push(itemId);
-      localStorage.setItem(`mock_users`, JSON.stringify(mockUsers));
+      saveMockEntityData('users', mockUsers);
     }
   }
   item.numberOfLikes = numberOfLikes;
@@ -342,7 +348,7 @@ services.share = async (serviceId, userId, userName) => {
   const notificationsService = new MockService('notifications');
   const newNotif = {
     _id: `share_notif_${Date.now()}`,
-    userId: service.UserId, // Using UserId consistently
+    userId: service.UserId,
     type: 'share',
     message: `${userName} shared your service ${service.name}`,
     relatedId: serviceId,
@@ -350,7 +356,7 @@ services.share = async (serviceId, userId, userName) => {
     createdAt: new Date().toISOString(),
   };
   notificationsService.data.unshift(newNotif);
-  notificationsService.saveData();
+  saveMockEntityData('notifications', notificationsService.data);
   console.log('Share simulated for service:', serviceId);
   return { success: true, message: 'Shared successfully' };
 };
@@ -362,7 +368,7 @@ events.share = async (eventId, userId, userName) => {
   const notificationsService = new MockService('notifications');
   const newNotif = {
     _id: `share_notif_${Date.now()}`,
-    userId: event.UserId, // Using UserId consistently
+    userId: event.UserId,
     type: 'share',
     message: `${userName} shared your event ${event.name}`,
     relatedId: eventId,
@@ -370,7 +376,7 @@ events.share = async (eventId, userId, userName) => {
     createdAt: new Date().toISOString(),
   };
   notificationsService.data.unshift(newNotif);
-  notificationsService.saveData();
+  saveMockEntityData('notifications', notificationsService.data);
   console.log('Share simulated for event:', eventId);
   return { success: true, message: 'Shared successfully' };
 };
@@ -411,7 +417,7 @@ class MockAuthService {
     localStorage.setItem('accessToken', accessToken);
     localStorage.setItem('userId', user._id);
     localStorage.setItem('authUser', JSON.stringify(user));
-    localStorage.setItem(`mock_users`, JSON.stringify(mockUsers)); // Persist mockUsers after signin
+    saveMockEntityData('users', mockUsers);
     return { accessToken, user, isNewUser };
   }
 
@@ -441,7 +447,7 @@ class MockAuthService {
     localStorage.setItem('accessToken', accessToken);
     localStorage.setItem('userId', user._id);
     localStorage.setItem('authUser', JSON.stringify(user));
-    localStorage.setItem(`mock_users`, JSON.stringify(mockUsers)); // Persist mockUsers after googleSign
+    saveMockEntityData('users', mockUsers);
     return { accessToken, user, isNewUser };
   }
 }

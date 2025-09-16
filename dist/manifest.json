@@ -1,0 +1,29 @@
+{
+  "short_name": "Perxins",
+  "name": "Perxins",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "logo192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "logo512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "description":"Perxins, una aplicación para que disfrutes al máximo tu tiempo libre. Discotecas, Bares, Eventos, todo en lo que pienses para divertirte fuera de casa en tú ciudad... ¡Lo tenemos!",
+  "lang": "es-ES",
+  "orientation": "any",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#242932"
+}

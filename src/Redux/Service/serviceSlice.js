@@ -1,4 +1,13 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+
+export const fetchServices = createAsyncThunk(
+  'services/fetchServices',
+  async (query) => {
+    const service = createService('services');
+    const data = await service.getAll(query);
+    return data;
+  }
+);
 
 export const serviceSlice = createSlice({
   name: 'service',
@@ -11,23 +20,21 @@ export const serviceSlice = createSlice({
         state.splice(0,state.length)
     },
     changeLikeServices : (state, action)=>{
-      const { liked, serviceId } = action.payload
-      if(liked){
-          const serviceMapped = state.map(service =>{
-            if(service._id===serviceId){
-              service.numberOfLikes ++;
-            }
-            return service})
-          state = serviceMapped
-       }else{
-          const serviceMapped = state.map(service =>{
-            if(service._id===serviceId){
-              service.numberOfLikes --;
-            }
-            return service})
-          state = serviceMapped
-       }
-    }
+      const { serviceId, serviceLikes } = action.payload;
+      const serviceMapped = state.map(service => {
+        if (service._id === serviceId) {
+          service.numberOfLikes = serviceLikes;
+        }
+        return service;
+      });
+      return serviceMapped;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchServices.fulfilled, (state, action) => {
+        state.push(...action.payload);
+      });
   },
 })
 

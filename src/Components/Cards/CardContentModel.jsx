@@ -12,13 +12,13 @@ function CardContentModel({
     cover,
     time
   } = service;
-  const {startHour,exitHour } = time;
+  const { startHour = '', exitHour = '' } = time || {};
   return (
     <CardContent className="font-color-white t-a-s d-f f-d-r">
           <div className="d-f j-c-c t-a-c">
-            <p className="d-f t-a-c a-i-c f-d-c j-c-c font-bold" style={{marginRight: "15px"}}>
-              {eventsDaysRendering(time)}
-            </p>
+            <div className="d-f t-a-c a-i-c f-d-c j-c-c font-bold" style={{marginRight: "15px"}}>
+              {time && eventsDaysRendering(time)}
+            </div>
           </div>
           <div 
           className="d-f j-c-c f-d-c font-bold"

@@ -1,17 +1,17 @@
 import React,{ useState, useEffect, useRef, Suspense} from "react";
 import "./App.css";
 import { Route, Switch, Link, useLocation } from "react-router-dom";
-import SearchAndFind from "./pages/SearchAndFind";
+import SearchAndFind from "./pages/SearchAndFind.jsx";
 import RegistrationPage from "./pages/Auth/Registration/RegistrationPage";
-import Login from "./pages/Auth/Login";
-import PageNotFound from "./pages/PageNotFound";
-import Profile from "./pages/User/Profile";
-import TemporaryDrawer from "./Components/Navbar/Navbar"
+import Login from "./pages/Auth/Login.jsx";
+import PageNotFound from "./pages/PageNotFound.jsx";
+import Profile from "./pages/User/Profile.jsx";
+import TemporaryDrawer from "./Components/Navbar/Navbar.jsx"
 import { AuthContext } from "./helpers/AuthContext";
 
 import Avatar from '@mui/material/Avatar';
-import Home from "./pages/Home";
-import IndividualPage from "./pages/IndividualPage";
+import Home from "./pages/Home.jsx";
+import IndividualPage from "./pages/IndividualPage.jsx";
 //import Poll from "./pages/Supports/poll/Poll";
 //import EmailSupport from "./pages/Supports/email/EmailSupport";
 import Create from "./pages/createService/Creating"
@@ -32,11 +32,24 @@ import SimpleBackdrop from "./Animations/Backdrop";
 import SearchServiceDialog from "./Components/SearchServiceDialog";
 import { getSubscription } from "./helpers/notifyMe";
 import PhoneIcon from "./SVG/phone.jsx"
+import { mockUsers, mockServices } from './mockData.jsx'; // Import mock data
 const Admin = React.lazy(() => import('./pages/Admin'));
-const ExcelUpload = React.lazy(() => import("./pages/Admin/ExcelUpload")) 
-const Share = React.lazy(() => import("./pages/Admin/Share")) 
+const ExcelUpload = React.lazy(() => import("./pages/Admin/ExcelUpload"))
+const Share = React.lazy(() => import("./pages/Admin/Share"))
 function App() {
-  const [authState, setAuthState] = useState({});
+  // Initialize authState with mock user data
+  const [authState, setAuthState] = useState({
+    _id: mockUsers[0]._id,
+    username: mockUsers[0].name,
+    email: mockUsers[0].email,
+    userPicture: mockUsers[0].profilePicture,
+    actualProvince: "La Habana", // Example mock data
+    musicalTastes: "Pop", // Example mock data
+    subscriptions: mockServices.slice(0, 1).map(s => ({ _id: s._id, name: s.name, type: s.category })), // Example mock subscriptions
+    isOwner: mockUsers[0].isOwner, // Example mock data
+    role: mockUsers[0].role,
+    status: true,
+  });
   const [isNotificationPanelOpen, setIsNotificationPanelOpen] = useState(false)
   const [profileMenuStatus, setProfileMenuStatus] = useState(false)
   const [eventsQuery, setEventsQuery] = useState({
@@ -55,7 +68,7 @@ function App() {
   const [loginError, setLoginError] = useState(false)
   const [openLoadingBackdrop, setOpenLoadingBackdrop] = useState(false)
 const [searchServiceDialogOpen, setSearchServiceDialogOpen] = useState(false)
-  const accessToken = localStorage.getItem("accessToken");
+  const accessToken = localStorage.getItem("accessToken"); // Keep accessToken for conditional rendering if needed
   const location = useLocation();
   const actualRouteName = location.pathname.split("/")[1];
   const actualSubRouteName = location.pathname.split("/")[2];
@@ -82,22 +95,24 @@ const [searchServiceDialogOpen, setSearchServiceDialogOpen] = useState(false)
       }
   },[accessToken])
 
-   useEffect(()=>{
-    if(accessToken)
-      {
-        getSubscription()
-        setIsNotificationPanelOpen(false)
-        axios.get("http://localhost:3001/user/fullUser",{
-          headers:  {'Authorization': 'Bearer '+ accessToken},
-        }).then((e)=> {
-          localStorage.setItem("userId", e.data._id);
-          setAuthState(e.data);
-        }).catch(e => console.log(e))
-      }
-  },[accessToken]) 
+  // Comment out the useEffect that fetches user data for demo purposes
+  //  useEffect(()=>{
+  //   if(accessToken)
+  //     {
+  //       getSubscription()
+  //       setIsNotificationPanelOpen(false)
+  //       axios.get("http://localhost:3001/user/fullUser",{
+  //         headers:  {'Authorization': 'Bearer '+ accessToken},
+  //       }).then((e)=> {
+  //         localStorage.setItem("userId", e.data._id);
+  //         setAuthState(e.data);
+  //       }).catch(e => console.log(e))
+  //     }
+  // },[accessToken])
 
   const logout = () => {
     localStorage.removeItem("accessToken");
+    // Reset to a default mock user or empty state on logout
     setAuthState({ username: "", id: 0, status: false });
   };
 
@@ -277,8 +292,8 @@ const [searchServiceDialogOpen, setSearchServiceDialogOpen] = useState(false)
                 route={"http://localhost:3001/events/"}
               />
             </Route> 
-            <Route path="/businessOffers" exact component={BusinessOffers} /> 
-
+            <Route path="/businessOffers" exact component={BusinessOffers} />
+ 
             {/* TODO: Comment before Launch */}
             
               <Suspense fallback={()=><h1>Cargando...</h1>}>
@@ -287,7 +302,7 @@ const [searchServiceDialogOpen, setSearchServiceDialogOpen] = useState(false)
               <Route path="/shareWhatsApp" component={Share}/>
               
             </Suspense>
-
+ 
             <Route path="" component={PageNotFound} />
             </Switch>
           <SimpleBackdrop 

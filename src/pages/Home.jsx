@@ -11,7 +11,6 @@ function Home({deferredPrompt, displayOfInstallButton}) {
     const {comida} = useParams();
 
     React.useEffect(() => {
-      console.log(1,comida)
     }, [comida])
     
 

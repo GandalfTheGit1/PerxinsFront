@@ -1,12 +1,13 @@
 import React,{useState, useContext} from 'react'
 import axios from "axios";
+import getEnvironment from '../../config/environment';
 //import { useHistory } from 'react-router';
 import {useParams} from 'react-router-dom'
 import { TextField } from "@mui/material";
 import { AuthContext } from '../../helpers/AuthContext';
 
 function SendEmailToChangePassword() {
-    const [email, setEmail] = useState("");
+    const [email, setEmail] = useState("demo@perxins.com");
     const [error, setError ] = useState(false);
     const [changeView, setChangeView] = useState(false)
     //let history = useHistory();
@@ -15,11 +16,20 @@ function SendEmailToChangePassword() {
 
     const {setOpenLoadingBackdrop} = useContext(AuthContext)
 
-    const sendEmail = (e) => {
+    const sendEmail = async (e) => {
       e.preventDefault()
       setError(false)
       setOpenLoadingBackdrop(true)
+      const env = getEnvironment();
       const data = { email };
+      if (env.isDemo) {
+        // Simulate email sending in demo mode
+        await new Promise(resolve => setTimeout(resolve, 1000)); // 1s delay
+        setOpenLoadingBackdrop(false)
+        setChangeView(true)
+        return;
+      }
+      // Real API for non-demo
       axios.post("http://localhost:3001/user/sendEmailToChangePassword", data,
       {headers: {'Authorization': 'Bearer '+ paramsId}})
       .then(() => {

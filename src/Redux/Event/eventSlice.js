@@ -11,22 +11,14 @@ const eventSlice = createSlice({
         state.splice(0,state.length)
     },
     changeLikeEvents : (state, action)=>{
-      const { liked, serviceId } = action.payload
-      if(liked){
-          const serviceMapped = state.map(service =>{
-            if(service._id===serviceId){
-              service.numberOfLikes ++;
-            }
-            return service})
-          state = serviceMapped
-       }else{
-          const serviceMapped = state.map(service =>{
-            if(service._id===serviceId){
-              service.numberOfLikes --;
-            }
-            return service})
-          state = serviceMapped
-       }
+      const { serviceId, serviceLikes } = action.payload;
+      const eventMapped = state.map(event => {
+        if (event._id === serviceId) {
+          event.numberOfLikes = serviceLikes;
+        }
+        return event;
+      });
+      return eventMapped;
     }
   },
 })

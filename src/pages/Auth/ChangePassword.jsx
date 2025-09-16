@@ -1,7 +1,7 @@
 import React,{useState, useContext} from 'react'
 import axios from "axios";
 
-import { useHistory } from 'react-router';
+import { useHistory } from 'react-router-dom';
 
 import { AuthContext } from "../../helpers/AuthContext";
 import {useParams} from 'react-router-dom'

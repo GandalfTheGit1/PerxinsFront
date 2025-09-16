@@ -75,13 +75,13 @@ export default function TemporaryDrawer({displayOfInstallButton, deferredPrompt}
         >
           {linksInMenu.map((link, key)=>(
             <BasicAccordion
+              key={key}
               name={link.accordionDeploy}
             >
                 {link.subcategory.map((e, key)=>(
-                  <div className="d-f f-d-c">
+                  <div key={key} className="d-f f-d-c">
                   <Link
                     to={ `/event?type=${link.accordionDeploy}&subcategory=${e}`}
-                    key={key}
                     style={{
                       color:"white",
                       margin: "5px 20px"
@@ -93,7 +93,6 @@ export default function TemporaryDrawer({displayOfInstallButton, deferredPrompt}
                   &&
                     <Link
                     to={ `/event?type=${link.accordionDeploy}`}
-                    key={link.subcategory.length}
                     style={{
                       color:"white",
                       margin: "5px 20px"
@@ -102,14 +101,10 @@ export default function TemporaryDrawer({displayOfInstallButton, deferredPrompt}
                     >Todos</Link>
                 }
                 </div>
-              ))}
+                ))}
               
             </BasicAccordion>
           ))}
-{/*             <div ><Link to={`/`} >Inicio</Link></div>
-            <div ><Link to="/service" >Locales</Link></div>
-            <div ><Link to="/event" >Eventos</Link></div>
-            <div ><Link to="/businessOffers" >Negocios</Link></div> */}
             <div
               onClick={()=>installPrompt(displayOfInstallButton, deferredPrompt)}
             >

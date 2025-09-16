@@ -1,5 +1,5 @@
 import React,{useEffect, useRef} from 'react'
-import { useHistory } from 'react-router';
+import { useHistory } from 'react-router-dom';
 import Mail from '../../../SVG/Mail';
 function EverythingReady() {
     const container = useRef()

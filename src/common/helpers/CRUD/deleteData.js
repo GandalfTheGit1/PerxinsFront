@@ -1,13 +1,18 @@
-import axios from "axios";
+import createService from '../../../services/factory';
+import getEnvironment from '../../../config/environment';
 
-const deleteData = (_id ,route , setAllCombos, allCombos) => {
-    const accessToken = localStorage.getItem("accessToken")
-    axios.delete(`${route}${_id}`,{
-      headers: {'Authorization': 'Bearer '+ accessToken}
-    })
-    .then(e => {
-      setAllCombos(allCombos.filter(e => e._id !== _id));
-    })
-    .catch(e => console.log(e) )
+const deleteData = async (id, entity, setAll, all) => {
+  try {
+    const service = createService(entity);
+    await service.delete(id);
+    setAll(all.filter(item => item._id !== id));
+  } catch (error) {
+    console.error('Error deleting data:', error);
+    // In demo, always succeed - remove anyway
+    if (getEnvironment().isDemo) {
+      setAll(all.filter(item => item._id !== id));
+    }
   }
+};
+
 export default deleteData;

@@ -43,11 +43,11 @@ function Profile({deferredPrompt, displayOfInstallButton}) {
         .then(e =>{
           setUserImages(e.data.secure_url)
           setAuthState({...authState, userPicture:e.data.secure_url })
-            axios.post("http://localhost:3001/user/userPic",{userPicture:e.data.secure_url},
-            {
-              headers:  {'Authorization': 'Bearer '+ accessToken},
-            } )
-            .catch(e=> console.log(e))
+            // axios.post("http://localhost:3001/user/userPic",{userPicture:e.data.secure_url},
+            // {
+            //   headers:  {'Authorization': 'Bearer '+ accessToken},
+            // } )
+            // .catch(e=> console.log(e))
             setIsLoading(false)
         })
         .catch(e => console.log(e))
@@ -71,24 +71,27 @@ function Profile({deferredPrompt, displayOfInstallButton}) {
       if (
         updateFormValues[key] === ''  ||
         updateFormValues[key] === null||
-        updateFormValues[key] === []  ||
+        (Array.isArray(updateFormValues[key]) && updateFormValues[key].length === 0)  ||
         updateFormValues[key] === ""  ||
         updateFormValues[key] === "Ninguno"
       ) {
         delete updateFormValues[key];
       }
     });
-    axios
-        .patch('http://localhost:3001/user/update', updateFormValues,
-        { headers: {'Authorization': 'Bearer '+ accessToken},}
-      )
-      .then(() => {
-        setAuthState({...authState, ...updateFormValues})
-        setOpenUpdateModal(false)
-      })
-      .catch(e => {
-        console.log(e);
-      });
+    // axios
+    //     .patch('http://localhost:3001/user/update', updateFormValues,
+    //     { headers: {'Authorization': 'Bearer '+ accessToken},}
+    //   )
+    //   .then(() => {
+    //     setAuthState({...authState, ...updateFormValues})
+    //     setOpenUpdateModal(false)
+    //   })
+    //   .catch(e => {
+    //     console.log(e);
+    //   });
+    setAuthState({...authState, ...updateFormValues})
+    setOpenUpdateModal(false)
+    console.log("User profile update disabled for demo.");
   }
 
   const handleUpdateFormValues = input => e =>{

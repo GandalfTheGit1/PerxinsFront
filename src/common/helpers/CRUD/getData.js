@@ -1,16 +1,15 @@
-import axios from "axios"
+import createService from '../../../services/factory';
 
-function getData(route, setAllCombos){
-    const accessToken = localStorage.getItem("accessToken")
-        axios.get(route,{
-          headers: {'Authorization': 'Bearer '+ accessToken}
-          } )
-        .then((response)=> {
-          const visibleCombos = response.data
-          setAllCombos(visibleCombos)
-          return visibleCombos;
-        }).catch(e=> console.log(e))
-
+async function getData(entity, query = {}, setAllCombos) {
+  try {
+    const service = createService(entity);
+    const data = await service.getAll(query);
+    setAllCombos(data);
+    return data;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    // In demo, always succeed or handle gracefully
+  }
 }
 
 export default getData;

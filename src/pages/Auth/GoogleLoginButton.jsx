@@ -1,9 +1,8 @@
 import React, {useContext} from 'react'
 import GoogleLogin from 'react-google-login';
 import {getSubscription} from "../../helpers/notifyMe"
-import { useHistory } from "react-router";
+import { useHistory } from "react-router-dom";
 import axios from "axios";
-import ReactGA from 'react-ga';
 import { AuthContext } from "../../helpers/AuthContext";
 
 function GoogleLoginButton({setError}) {
@@ -37,8 +36,6 @@ function GoogleLoginButton({setError}) {
                   status: true
                 })
 
-                ReactGA.initialize('G-43FRSBZ75Q',{ gaOptions: { userId: user._id}});
-                ReactGA.pageview(window.location.pathname + window.location.search);
 
                 localStorage.setItem("accessToken", accessToken);
                 localStorage.setItem("userId", user._id);

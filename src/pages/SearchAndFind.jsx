@@ -4,10 +4,10 @@ import {
   useContext,
   useRef,
   useCallback } from "react";
-import { useHistory } from 'react-router';
+import { useHistory } from 'react-router-dom';
 import { AuthContext } from "../helpers/AuthContext";
 import ShareIcon from '@mui/icons-material/Share';
-import Cards from "../Components/Cards";
+import Cards from "../Components/Cards.jsx";
 import useCheckToken from "../Hooks/useCheckToken";
 import ShareModal from "../common/Components/ShareComponents/ShareModal";
 //import TextField from '@mui/material/TextField';
@@ -35,6 +35,8 @@ import SubmitDialog from "../common/Components/SubmitDialog";
 import perxinsIcon from "../SVG/PenroseTriangle.png"
 import { Link } from "react-router-dom";
 import EliminateKey from "../helpers/EliminateKey";
+import { mockServices, mockEvents, mockLikes } from '../mockData.jsx'; // Import mock data
+import { likes, services, events } from '../services/mockServices';
 
 function SearchAndFind({ likesUrl, apiURL, serviceOrEvent, query, setQuery}) {
   const { authState, setOpenLoadingBackdrop } = useContext(AuthContext);
@@ -65,81 +67,97 @@ function SearchAndFind({ likesUrl, apiURL, serviceOrEvent, query, setQuery}) {
   const handleClickOpen = () => setOpen(true);
   const setApiCall = useCheckToken(()=>{})
   const handleClose = () => setOpen(false);
-  const getLikedService = useCallback(()=> {
-      if(accessToken)
-      setApiCall("get","http://localhost:3001/user/fullUser")
-      .then(e => {
-      const givenLikes = e.data.givenLikes;
-      
-      setLikedServices(givenLikes)
-    })
-    .catch(()=>{})
-  },[])
+  const getLikedService = useCallback(async () => {
+    if (authState._id) {
+      const userLikes = mockLikes.filter(l => l.userId === authState._id && l.liked);
+      setLikedServices(userLikes.map(l => l.serviceId || l.eventId));
+    }
+  }, [authState._id]);
 
-  const handleServicesFetching = (response) => {
-    const newData = response.data.sort(e => {
-      const {time} = e; 
-      if(time.eventsDays) return -1
-      if(time.weekDays) return 0
-      if(time.continuesEventsStartDay) return 1
+  const handleServicesFetching = (data) => {
+    const newData = data.sort(e => {
+      const {time} = e;
+      if(time?.eventsDays) return -1
+      if(time?.weekDays) return 0
+      if(time?.continuesEventsStartDay) return 1
       else return 0
     })
     serviceOrEvent==="service"?
     dispatch(getMoreServices(newData)):
     dispatch(getMoreEvents(newData))
-    //setServicesList(response.data);
     setSearch(false);
   }
+
+  // Modified searchByQuery to use mock data
   const searchByQuery = (url) => {
     query = EliminateKey(query)
-    const urlQueries = new URLSearchParams(query).toString()
-      setApiCall("get",`${url}?${urlQueries}`)
-      .then( response => handleServicesFetching(response))
-      .then(() => {
-        getLikedService()
-        setOpenLoadingBackdrop(false)
-        console.log( searchDefaultOnBottom.current.isDefaultSearch)
-        searchDefaultOnBottom.current.isDefaultSearch = false;
-
-        console.log( searchDefaultOnBottom.current.isDefaultSearch)
-      })
-      .catch((e)=> {
-        setError(true)
-        setOpenLoadingBackdrop(false)
-      })
-      setOpenLoadingBackdrop(false)
+    // const urlQueries = new URLSearchParams(query).toString()
+    //   setApiCall("get",`${url}?${urlQueries}`)
+    //   .then( response => handleServicesFetching(response))
+    //   .then(() => {
+    //     getLikedService()
+    //     setOpenLoadingBackdrop(false)
+    //     console.log( searchDefaultOnBottom.current.isDefaultSearch)
+    //     searchDefaultOnBottom.current.isDefaultSearch = false;
+    //     console.log( searchDefaultOnBottom.current.isDefaultSearch)
+    //   })
+    //   .catch((e)=> {
+    //     setError(true)
+    //     setOpenLoadingBackdrop(false)
+    //   })
+    //   setOpenLoadingBackdrop(false)
+    setOpenLoadingBackdrop(true)
+    const filteredData = serviceOrEvent === "service" ? mockServices : mockEvents;
+    handleServicesFetching(filteredData);
+    getLikedService();
+    setOpenLoadingBackdrop(false);
+    searchDefaultOnBottom.current.isDefaultSearch = false;
   }
 
   const urlParams = new URLSearchParams(window.location.search)
+  // Modified setDefaultSearch to use mock data
   const setDefaultSearch = (url) => {
     setOpenLoadingBackdrop(true)
-    setApiCall("get", `${url}?${urlParams}`)
-      .then( response => handleServicesFetching(response))
-      .then(() => {
-        getLikedService()
-        setOpenLoadingBackdrop(false)
-      })
-      .catch((e)=> {
-        setError(true)
-        setOpenLoadingBackdrop(false)
-      })
-      setOpenLoadingBackdrop(false)
+    // setApiCall("get", `${url}?${urlParams}`)
+    //   .then( response => handleServicesFetching(response))
+    //   .then(() => {
+    //     getLikedService()
+    //     setOpenLoadingBackdrop(false)
+    //   })
+    //   .catch((e)=> {
+    //     setError(true)
+    //     setOpenLoadingBackdrop(false)
+    //   })
+    //   setOpenLoadingBackdrop(false)
+    const dataToUse = serviceOrEvent === "service" ? mockServices : mockEvents;
+    handleServicesFetching(dataToUse);
+    getLikedService();
+    setOpenLoadingBackdrop(false);
   }
   
+  // Modified setDefaultSearchOnSkip to use mock data
   const setDefaultSearchOnSkip = (url) => {
-
-    setApiCall("get",`${url}?${urlParams}&skip=${searchDefaultOnBottom.current.skip}` )
-      .then( response => handleServicesFetching(response))
-      .then(() => {
-        getLikedService()
-        searchDefaultOnBottom.current.skip += 10;
-        setOpenLoadingBackdrop(false)
-      })
-      .catch((e)=> {
-        setError(true)
-        setOpenLoadingBackdrop(false)
-      })
-      setOpenLoadingBackdrop(false)
+    // setApiCall("get",`${url}?${urlParams}&skip=${searchDefaultOnBottom.current.skip}` )
+    //   .then( response => handleServicesFetching(response))
+    //   .then(() => {
+    //     getLikedService()
+    //     searchDefaultOnBottom.current.skip += 10;
+    //     setOpenLoadingBackdrop(false)
+    //   })
+    //   .catch((e)=> {
+    //     setError(true)
+    //     setOpenLoadingBackdrop(false)
+    //   })
+    //   setOpenLoadingBackdrop(false)
+    setOpenLoadingBackdrop(true);
+    const dataToUse = serviceOrEvent === "service" ? mockServices : mockEvents;
+    // Simulate pagination by slicing the mock data
+    const startIndex = searchDefaultOnBottom.current.skip;
+    const paginatedData = dataToUse.slice(startIndex, startIndex + 10); // Fetch 10 items
+    handleServicesFetching(paginatedData);
+    getLikedService();
+    searchDefaultOnBottom.current.skip += 10;
+    setOpenLoadingBackdrop(false);
   }
   const onSearch = (e) => {
     setOpenLoadingBackdrop(true)
@@ -167,39 +185,83 @@ function SearchAndFind({ likesUrl, apiURL, serviceOrEvent, query, setQuery}) {
   const handleQueryChange = input => e =>{
     setQuery({...query, [input]: e.target.value})
   }
-  const likeAService = (serviceId) => {
-    console.log(likesUrl, { associatedId: serviceId, userId: _id })
-    setApiCall(
-      "post",
-      likesUrl,
-      { associatedId: serviceId, userId: _id }
-      )
-    .then((response) => {
-      const {liked, serviceLikes} = response.data;
-      if(serviceOrEvent==="event"){
-        dispatch(
-          changeLikeEvents({liked, serviceId, userId: _id, serviceLikes})
-          )
-      }else{
-        dispatch(
-          changeLikeServices({liked, serviceId, userId: _id, serviceLikes})
-         ) 
+  const likeAService = async (serviceId) => {
+    if (!authState._id) {
+      setLoginError(true);
+      return;
+    }
+    console.log('Liking', serviceId, 'for user', authState._id, 'type', serviceOrEvent);
+    try {
+      // Always like for demo: get from mock, increment
+      const itemService = serviceOrEvent === 'service' ? services : events;
+      const item = await itemService.getById(serviceId);
+      const currentLikes = item.numberOfLikes || 0;
+      const newLikes = currentLikes + 1;
+      item.numberOfLikes = newLikes;
+      itemService.saveData();
+      // Dispatch new count to Redux
+      const payload = { serviceId, serviceLikes: newLikes };
+      if (serviceOrEvent === 'service') {
+        dispatch(changeLikeServices(payload));
+      } else {
+        dispatch(changeLikeEvents(payload));
       }
-
-     setLikedServices(e => {
-      if(liked){
-        e.push(serviceId)
-        return [...e]
-      }else{
-        return e.filter(e => e!==serviceId)
+      // Ensure in likedServices for icon
+      setLikedServices(prev => prev.includes(serviceId) ? prev : [...prev, serviceId]);
+      // Add like entry if not exists
+      const likesService = new MockService('likes');
+      const existing = likesService.data.find(l => l.userId === authState._id && (l.serviceId === serviceId || l.eventId === serviceId));
+      if (!existing) {
+        const newLike = {
+          _id: `like_${Date.now()}`,
+          userId: authState._id,
+          [serviceOrEvent === 'service' ? 'serviceId' : 'eventId']: serviceId,
+          liked: true,
+          createdAt: new Date().toISOString(),
+        };
+        likesService.data.push(newLike);
+        likesService.saveData();
       }
-     })
-    })
-    .catch(e => setLoginError(true))
-  }
-  const sharingCard = (url, quote)=>{
-    setShareValues({url, quote})
-  }
+      // Notify owner if different
+      const ownerId = item.ownerId || item.organizerId;
+      if (ownerId && ownerId !== authState._id) {
+        const notificationsService = new MockService('notifications');
+        const newNotif = {
+          _id: `notif_${Date.now()}`,
+          userId: ownerId,
+          type: 'like',
+          message: `${authState.name || 'User'} liked your ${serviceOrEvent}`,
+          relatedId: serviceId,
+          read: false,
+          createdAt: new Date().toISOString(),
+        };
+        notificationsService.data.unshift(newNotif);
+        notificationsService.saveData();
+      }
+      console.log('Like added for', serviceOrEvent, { numberOfLikes: newLikes });
+    } catch (error) {
+      console.error('Like error:', error);
+      setLoginError(true);
+    }
+  };
+  const sharingCard = async (serviceId, name) => {
+    if (!authState._id) {
+      setLoginError(true);
+      return;
+    }
+    console.log('Share simulated for', serviceId);
+    try {
+      if (serviceOrEvent === 'service') {
+        await services.share(serviceId, authState._id, authState.name);
+      } else {
+        await events.share(serviceId, authState._id, authState.name);
+      }
+      setShareValues({ url: serviceId, quote: name });
+      handleClickOpen();
+    } catch (error) {
+      console.error('Share error:', error);
+    }
+  };
   const getNewDataAfterBottom = (township) => {
     query.township = township
     searchByQuery(`${apiURL}/findBasic`)
@@ -209,27 +271,22 @@ function SearchAndFind({ likesUrl, apiURL, serviceOrEvent, query, setQuery}) {
     return (
       <div className="cardFooterContainer d-f">
                 <div
-                className="like d-f a-i-c j-c-c" 
-                onClick={()=>likeAService(service._id, service.likes)}
+                className="like d-f a-i-c j-c-c"
+                onClick={()=>likeAService(service._id)}
                 >
-                  {(likedServices.some(element => 
+                  {(likedServices.some(element =>
                      element === service._id
                     ))? <Favorite /> :  <FavoriteBorder />}
-                  <label className="font-color-white"> {service.numberOfLikes}</label>
+                  <label className="font-color-white"> {service.numberOfLikes || 0}</label> {/* Use 0 for mock data */}
                 </div>
 
                 <div className="footerCardBottomsContainer d-f a-i-c f-d-c j-c-c" onClick={()=>{ history.push(`/${serviceOrEvent}/message/${service._id}`)}}>
-                {/* <label className="font-color-white">{service.messages?.length}</label> */}
                   <Comment/>
                 </div>
 
-                <div className="footerCardBottomsContainer d-f a-i-c f-d-c j-c-c" 
-                  onClick={()=>{
-                  sharingCard(service._id, service.name);
-                  handleClickOpen()
-                  axios.get(`http://localhost:3001/${serviceOrEvent}s/shared/${service._id}`, /* {
-                    headers:  {'Authorization': 'Bearer '+ accessToken},
-                  } */)
+                <div className="footerCardBottomsContainer d-f a-i-c f-d-c j-c-c"
+                  onClick={async () => {
+                  await sharingCard(service._id, service.name);
                 }}
                   >
                   <ShareIcon style={{color: "#40A3DA", width: "30px", height: "30px"}}/>
@@ -253,12 +310,9 @@ function SearchAndFind({ likesUrl, apiURL, serviceOrEvent, query, setQuery}) {
       setSearch(false);
     }
     else{
-      setDefaultSearch(
-        `http://localhost:3001/${
-          serviceOrEvent === "service" 
-          ? "services" : "events"
-        }/defaultSearch`);
-      //TODO: Llamada a una ruta que sea findAll.skip.limit(20)
+      // Use mock data for default search
+      const dataToUse = serviceOrEvent === "service" ? mockServices : mockEvents;
+      handleServicesFetching(dataToUse);
       setSearch(false);
     }
   },[])
@@ -274,7 +328,7 @@ function SearchAndFind({ likesUrl, apiURL, serviceOrEvent, query, setQuery}) {
         console.log( "1", searchDefaultOnBottom.current.isDefaultSearch)
         if(searchDefaultOnBottom.current.isDefaultSearch){
           setDefaultSearchOnSkip(
-            "http://localhost:3001/services/defaultSearchOnSkip"
+            // "http://localhost:3001/services/defaultSearchOnSkip" // No longer needed
             )
         }
         else{
@@ -296,7 +350,7 @@ function SearchAndFind({ likesUrl, apiURL, serviceOrEvent, query, setQuery}) {
       if(entries[0].isIntersecting){
         if(searchDefaultOnBottom.current.isDefaultSearch){
           setDefaultSearchOnSkip(
-            "http://localhost:3001/events/defaultSearchOnSkip"
+            // "http://localhost:3001/events/defaultSearchOnSkip" // No longer needed
             )
         }
         else{
@@ -494,14 +548,13 @@ function SearchAndFind({ likesUrl, apiURL, serviceOrEvent, query, setQuery}) {
         serviceReduxStore.map((service, key) => {
         return (
           <div ref={lastElementObserver} key={key}>
-          <Link to={`/${serviceOrEvent}/${service._id}`}>
-            <Cards 
+          
+            <Cards
               service={service}
               serviceOrEvent={serviceOrEvent}
               key={key}>
                 {footerCard(service)}
             </Cards>
-          </Link>
           </div>
         )}):
         eventReduxStore.map((service, key) => {
@@ -514,14 +567,12 @@ function SearchAndFind({ likesUrl, apiURL, serviceOrEvent, query, setQuery}) {
               <p>{isNewDay(service.time.eventsDays, service.isPaying, service.time.weekDays, service.time.continuesEventsEndDay)}</p>
               
               </div>
-            <Link to={`/${serviceOrEvent}/${service._id}`}>
-            <Cards 
+            <Cards
               service={service}
               serviceOrEvent={serviceOrEvent}
               key={key}>
                 {footerCard(service)}
             </Cards>
-            </Link>
             </div>
           )})
         }

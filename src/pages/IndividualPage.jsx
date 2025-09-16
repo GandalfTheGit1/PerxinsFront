@@ -14,6 +14,7 @@ import UnsubscribeButton from '../common/Components/UnsubscribeButton';
 //import { eventsDaysFormate } from '../helpers/eventsDaysRendering';
 import { eventType, localType } from '../helpers/iconsRefs';
 //import weekDay from '../helpers/weekDay';
+import { mockServices, mockEvents } from '../mockData.jsx'; // Import mock data
 
 import RatingSection from './IndividualPages/Sections/RatingSection';
 import Section1 from './IndividualPages/Sections/Section1';
@@ -103,61 +104,78 @@ function IndividualPage({serviceOrEvent}) {
     }
 
     const sendRating = ()=>{
-        setApiCall(
-        "post",
-        "http://localhost:3001/services/rateService", 
-        {serviceId: individualService._id,
-        ratings:{
-            "serviceQualityRating": {
-                rating: newRatingValues.serviceQualityRating,
-            },
-            "peopleServiceTreatmentRating":{
-                rating: newRatingValues.peopleServiceTreatmentRating,
-            },
-            "pricingServiceRating":{
-                rating: newRatingValues.pricingServiceRating,
-            },
-        }
-        } )
-        .then(e => setIndividualService({...individualService, ...e.data}))
-        .catch(e=> {
-                setLoginError(true)
-        })
+        console.log("Rating functionality disabled for demo.");
+        // setApiCall(
+        // "post",
+        // "http://localhost:3001/services/rateService",
+        // {serviceId: individualService._id,
+        // ratings:{
+        //     "serviceQualityRating": {
+        //         rating: newRatingValues.serviceQualityRating,
+        //     },
+        //     "peopleServiceTreatmentRating":{
+        //         rating: newRatingValues.peopleServiceTreatmentRating,
+        //     },
+        //     "pricingServiceRating":{
+        //         rating: newRatingValues.pricingServiceRating,
+        //     },
+        // }
+        // } )
+        // .then(e => setIndividualService({...individualService, ...e.data}))
+        // .catch(e=> {
+        //         setLoginError(true)
+        // })
     }
     useEffect(() => {
         setOpenLoadingBackdrop(true)
-          setApiCall("get",`http://localhost:3001/${serviceOrEvent}s/${id}`)
-          .then(response=>{
-            if(serviceOrEvent === "service"){
-                const data = response.data.service;
-                setNumberOfUsersRating(response.data.numberOfUsersThatHasRate)
-                setIndividualService(data);
-                setOpenLoadingBackdrop(false)
-            }
-            else {
-                const data = response.data
-                setIndividualService(data);
-            }
-            setOpenLoadingBackdrop(false)
+        // setApiCall("get",`http://localhost:3001/${serviceOrEvent}s/${id}`)
+        // .then(response=>{
+        //     if(serviceOrEvent === "service"){
+        //         const data = response.data.service;
+        //         setNumberOfUsersRating(response.data.numberOfUsersThatHasRate)
+        //         setIndividualService(data);
+        //         setOpenLoadingBackdrop(false)
+        //     }
+        //     else {
+        //         const data = response.data
+        //         setIndividualService(data);
+        //     }
+        //     setOpenLoadingBackdrop(false)
 
-          })
-          .then(()=>{
-            let date = new Date().getHours();
-            const aperture = +individualService.time.startHour.split(":")[0]
-            let closure = +individualService.time.exitHour.split(":")[0]
-            if(aperture>closure) closure += 24;
-            if(aperture>date) date += 24;
-            if((aperture<date)&&(date<closure)){
-                setAvailabilityStatus(true)//True es Abierto
-            }
-            else{
-                setAvailabilityStatus(false)// False es cerrado
-            }
-            setOpenLoadingBackdrop(false) 
-          }
-          )
-          .catch(()=> setOpenLoadingBackdrop(false))
-    }, [])
+        //   })
+        //   .then(()=>{
+        //     let date = new Date().getHours();
+        //     const aperture = +individualService.time.startHour.split(":")[0]
+        //     let closure = +individualService.time.exitHour.split(":")[0]
+        //     if(aperture>closure) closure += 24;
+        //     if(aperture>date) date += 24;
+        //     if((aperture<date)&&(date<closure)){
+        //         setAvailabilityStatus(true)//True es Abierto
+        //     }
+        //     else{
+        //         setAvailabilityStatus(false)// False es cerrado
+        //     }
+        //     setOpenLoadingBackdrop(false)
+        //   }
+        //   )
+        //   .catch(()=> setOpenLoadingBackdrop(false))
+
+        // Use mock data
+        const dataToUse = serviceOrEvent === "service" ? mockServices : mockEvents;
+        const foundItem = dataToUse.find(item => item._id === id);
+
+        if (foundItem) {
+            setIndividualService(foundItem);
+            // Simulate rating data if needed
+            setNumberOfUsersRating(foundItem.reviews?.length || 0);
+            // Simulate availability status based on mock data or a default
+            setAvailabilityStatus(true); // Assuming available for demo
+        } else {
+            console.error(`Item with ID ${id} not found in mock data.`);
+            // Optionally redirect to a 404 page or handle error
+        }
+        setOpenLoadingBackdrop(false);
+    }, [id, serviceOrEvent])
     const searchIcon = (individualService) => {
         let iconsRef = "";
         if(serviceOrEvent==="service"){

@@ -1,5 +1,5 @@
 import getEnvironment from '../config/environment';
-import { mockUsers, mockServices, mockEvents, mockBusinessOffers, mockLikes, mockReservations, mockMessages, mockNotifications, mockPolls } from '../mockData.jsx';
+import { mockUsers, mockServices, mockEvents, mockBusinessOffers, mockLikes, mockReservations, mockMessages, mockNotifications, mockPolls, createMockService, createMockEvent } from '../mockData.jsx';
 
 /**
  * Mock service implementation using localStorage persistence
@@ -20,7 +20,9 @@ class MockService {
     }
     // Default data based on entity
     switch (this.entity) {
-      case 'users': return mockUsers;
+      case 'users':
+        const storedUsers = localStorage.getItem(`mock_users`);
+        return storedUsers ? JSON.parse(storedUsers) : mockUsers;
       case 'services': return mockServices;
       case 'events': return mockEvents;
       case 'businessOffers': return mockBusinessOffers;
@@ -66,14 +68,32 @@ class MockService {
 
   async create(data) {
     await this.delay();
-    const newItem = { ...data, _id: `mock_${this.entity}_${Date.now()}`, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+    let newItem;
+    const currentUserId = localStorage.getItem('userId'); // Assuming userId is stored in localStorage
+
+    if (this.entity === 'services') {
+      newItem = createMockService(data, currentUserId);
+      // Add the new service to the user's owned services
+      const user = mockUsers.find(u => u._id === currentUserId);
+      if (user) {
+        user.servicesOwned.push(newItem._id);
+        localStorage.setItem(`mock_users`, JSON.stringify(mockUsers));
+      }
+      this.addNotification(currentUserId, `New service '${newItem.name}' created!`, newItem._id);
+    } else if (this.entity === 'events') {
+      newItem = createMockEvent(data, currentUserId);
+      // Add the new event to the user's owned events
+      const user = mockUsers.find(u => u._id === currentUserId);
+      if (user) {
+        user.eventsOwned.push(newItem._id);
+        localStorage.setItem(`mock_users`, JSON.stringify(mockUsers));
+      }
+      this.addNotification(currentUserId, `New event '${newItem.name}' created!`, newItem._id);
+    } else {
+      newItem = { ...data, _id: `mock_${this.entity}_${Date.now()}`, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+    }
     this.data.unshift(newItem);
     this.saveData();
-    // Simulate relationships, e.g., add notification
-    if (this.entity === 'services') {
-      this.addNotification('user2', 'New service created', newItem._id); // Owner notification
-    }
-    // Similar for other entities
     return newItem;
   }
 
@@ -158,7 +178,7 @@ class MockService {
       item.numberOfLikes++;
       itemService.saveData();
       this.saveData();
-      this.addNotification(item.ownerId || item.organizerId, `${userId} liked your ${type}`, itemId);
+      this.addNotification(item.UserId || item.organizerId, `${userId} liked your ${type}`, itemId);
       return newLike;
     }
   }
@@ -188,6 +208,21 @@ likes.toggleLike = async (userId, itemId, type) => {
     existingLike.liked = !existingLike.liked;
     liked = existingLike.liked;
     numberOfLikes = liked ? item.numberOfLikes + 1 : item.numberOfLikes - 1;
+    if (!liked) {
+      // Remove from user's givenLikes
+      const user = mockUsers.find(u => u._id === userId);
+      if (user) {
+        user.givenLikes = user.givenLikes.filter(likeId => likeId !== itemId);
+        localStorage.setItem(`mock_users`, JSON.stringify(mockUsers));
+      }
+    } else {
+      // Add to user's givenLikes
+      const user = mockUsers.find(u => u._id === userId);
+      if (user) {
+        user.givenLikes.push(itemId);
+        localStorage.setItem(`mock_users`, JSON.stringify(mockUsers));
+      }
+    }
   } else {
     const newLike = {
       _id: `like_${Date.now()}`,
@@ -200,12 +235,18 @@ likes.toggleLike = async (userId, itemId, type) => {
     liked = true;
     numberOfLikes = item.numberOfLikes + 1;
     likesService.saveData();
+    // Add to user's givenLikes
+    const user = mockUsers.find(u => u._id === userId);
+    if (user) {
+      user.givenLikes.push(itemId);
+      localStorage.setItem(`mock_users`, JSON.stringify(mockUsers));
+    }
   }
   item.numberOfLikes = numberOfLikes;
   itemService.saveData();
   likesService.saveData();
   // Add notification to owner
-  const ownerId = item.ownerId || item.organizerId;
+  const ownerId = item.UserId; // Using UserId consistently
   if (liked && ownerId) {
     likesService.addNotification(ownerId, `${userId} liked your ${type}`, itemId);
   }
@@ -221,7 +262,7 @@ services.share = async (serviceId, userId, userName) => {
   const notificationsService = new MockService('notifications');
   const newNotif = {
     _id: `share_notif_${Date.now()}`,
-    userId: service.ownerId,
+    userId: service.UserId, // Using UserId consistently
     type: 'share',
     message: `${userName} shared your service ${service.name}`,
     relatedId: serviceId,
@@ -241,7 +282,7 @@ events.share = async (eventId, userId, userName) => {
   const notificationsService = new MockService('notifications');
   const newNotif = {
     _id: `share_notif_${Date.now()}`,
-    userId: event.organizerId,
+    userId: event.UserId, // Using UserId consistently
     type: 'share',
     message: `${userName} shared your event ${event.name}`,
     relatedId: eventId,
@@ -290,6 +331,7 @@ class MockAuthService {
     localStorage.setItem('accessToken', accessToken);
     localStorage.setItem('userId', user._id);
     localStorage.setItem('authUser', JSON.stringify(user));
+    localStorage.setItem(`mock_users`, JSON.stringify(mockUsers)); // Persist mockUsers after signin
     return { accessToken, user, isNewUser };
   }
 
@@ -319,6 +361,7 @@ class MockAuthService {
     localStorage.setItem('accessToken', accessToken);
     localStorage.setItem('userId', user._id);
     localStorage.setItem('authUser', JSON.stringify(user));
+    localStorage.setItem(`mock_users`, JSON.stringify(mockUsers)); // Persist mockUsers after googleSign
     return { accessToken, user, isNewUser };
   }
 }

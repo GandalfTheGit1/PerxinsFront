@@ -12,6 +12,13 @@ export const mockUsers = [
     role: 'owner',
     createdAt: '2024-01-15T10:00:00Z',
     updatedAt: '2024-09-01T12:00:00Z',
+    givenLikes: [],
+    eventsOwned: [],
+    servicesOwned: [],
+    subscriptions: [],
+    notifications: [],
+    numberOfNotificationsUnseen: 0,
+    notificationsSubscriptionForBrowser: {},
   },
   {
     _id: 'user2',
@@ -26,6 +33,13 @@ export const mockUsers = [
     role: 'owner',
     createdAt: '2024-02-20T14:30:00Z',
     updatedAt: '2024-08-15T09:45:00Z',
+    givenLikes: [],
+    eventsOwned: [],
+    servicesOwned: [],
+    subscriptions: [],
+    notifications: [],
+    numberOfNotificationsUnseen: 0,
+    notificationsSubscriptionForBrowser: {},
   },
   {
     _id: 'user3',
@@ -40,6 +54,13 @@ export const mockUsers = [
     role: 'owner',
     createdAt: '2024-03-10T16:20:00Z',
     updatedAt: '2024-09-10T11:30:00Z',
+    givenLikes: [],
+    eventsOwned: [],
+    servicesOwned: [],
+    subscriptions: [],
+    notifications: [],
+    numberOfNotificationsUnseen: 0,
+    notificationsSubscriptionForBrowser: {},
   },
   {
     _id: 'user4',
@@ -54,6 +75,13 @@ export const mockUsers = [
     role: 'owner',
     createdAt: '2024-04-05T08:15:00Z',
     updatedAt: '2024-07-20T14:00:00Z',
+    givenLikes: [],
+    eventsOwned: [],
+    servicesOwned: [],
+    subscriptions: [],
+    notifications: [],
+    numberOfNotificationsUnseen: 0,
+    notificationsSubscriptionForBrowser: {},
   },
   {
     _id: 'user5',
@@ -68,24 +96,173 @@ export const mockUsers = [
     role: 'client',
     createdAt: '2024-05-12T13:45:00Z',
     updatedAt: '2024-09-12T17:20:00Z',
-    },
-    {
-      _id: 'user6',
-      name: 'Admin User',
-      email: 'admin@perxins.com',
-      profilePicture: 'https://via.placeholder.com/150/000000/FFFFFF?text=AU',
-      bio: 'Administrator with full access to manage users and content.',
-      province: 'La Habana',
-      township: 'Vedado',
-      musicalTastes: 'All',
-      isOwner: true,
-      role: 'admin',
-      createdAt: '2024-01-01T09:00:00Z',
-      updatedAt: '2024-09-15T10:00:00Z',
-    }
-  ];
+    givenLikes: [],
+    eventsOwned: [],
+    servicesOwned: [],
+    subscriptions: [],
+    notifications: [],
+    numberOfNotificationsUnseen: 0,
+    notificationsSubscriptionForBrowser: {},
+  },
+  {
+    _id: 'user6',
+    name: 'Admin User',
+    email: 'admin@perxins.com',
+    profilePicture: 'https://via.placeholder.com/150/000000/FFFFFF?text=AU',
+    bio: 'Administrator with full access to manage users and content.',
+    province: 'La Habana',
+    township: 'Vedado',
+    musicalTastes: 'All',
+    isOwner: true,
+    role: 'admin',
+    createdAt: '2024-01-01T09:00:00Z',
+    updatedAt: '2024-09-15T10:00:00Z',
+    givenLikes: [],
+    eventsOwned: [],
+    servicesOwned: [],
+    subscriptions: [],
+    notifications: [],
+    numberOfNotificationsUnseen: 0,
+    notificationsSubscriptionForBrowser: {},
+  },
+];
 
-export const mockServices = [
+export const createMockUser = (email, username, isOwner = false, isAdmin = false) => ({
+  _id: `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+  name: username,
+  email: email,
+  profilePicture: `https://via.placeholder.com/150/CCCCCC/FFFFFF?text=${username.charAt(0).toUpperCase()}`,
+  bio: 'Demo user bio.',
+  province: 'La Habana',
+  township: 'Playa',
+  musicalTastes: 'None',
+  isAuth: true,
+  isOwner: isOwner,
+  isAdmin: isAdmin,
+  role: isAdmin ? 'admin' : (isOwner ? 'owner' : 'client'),
+  actualProvince: 'La Habana',
+  verificationCode: null,
+  userPicture: '',
+  password: 'password123', // Demo password
+  recoveryToken: null,
+  givenLikes: [],
+  eventsOwned: [],
+  servicesOwned: [],
+  subscriptions: [],
+  notifications: [],
+  numberOfNotificationsUnseen: 0,
+  notificationsSubscriptionForBrowser: {},
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+});
+
+export const createMockService = (data, userId) => ({
+  _id: `service_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+  name: data.name || 'New Demo Service',
+  isPaying: data.isPaying || false,
+  perxinsGift: data.perxinsGift || false,
+  busRoutes: data.busRoutes || [],
+  principalImage: data.principalImage || '/PenroseTriangle.png',
+  township: data.township || 'Playa',
+  secondaryImages: data.secondaryImages || [],
+  type: data.type || 'Other', // Matches schema 'type'
+  subscribers: data.subscribers || [],
+  cover: data.cover || {
+    ForMen: 0,
+    ForWomen: 0,
+    WorkingWithUs: 0,
+    Regular: 0,
+    ForFEU: 0,
+  },
+  exactDirection: {
+    province: data.exactDirection?.province || 'La Habana',
+    placeToSetEvent: data.exactDirection?.placeToSetEvent || 'Unknown Place',
+    googleLink: data.exactDirection?.googleLink || 'https://maps.google.com/',
+  },
+  allowReservation: data.allowReservation || false,
+  typeOfMusicPlayed: data.typeOfMusicPlayed || '',
+  contact: data.contact || {
+    phone: '',
+    whatsApp: '',
+    email: '',
+    webSite: '',
+    facebook: '',
+    twitter: '',
+    instagram: '',
+  },
+  serviceQualityRating: [],
+  peopleServiceTreatmentRating: [],
+  pricingServiceRating: [],
+  avgServiceQualityRating: 0,
+  avgPeopleServiceTreatmentRating: 0,
+  avgPricingServiceRating: 0,
+  time: data.time || {
+    startDays: 'Monday',
+    endDays: 'Friday',
+    startHour: '09:00',
+    exitHour: '17:00',
+  },
+  events: [],
+  description: data.description || 'A new service created for demo purposes.',
+  UserId: userId, // Assuming userId is the owner
+  messages: [],
+  createdAt: new Date().toISOString(),
+  numberOfLikes: 0,
+  numberOfShares: 0,
+  numberOfViews: 0,
+  numberOfSubscribers: 0,
+  updatedAt: new Date().toISOString(),
+});
+
+export const createMockEvent = (data, userId) => ({
+  _id: `event_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+  name: data.name || 'New Demo Event',
+  type: data.type || 'Other', // Matches schema 'type'
+  subcategory: data.subcategory || 'General',
+  township: data.township || 'Playa',
+  isPaying: data.isPaying || false,
+  perxinsGift: data.perxinsGift || false,
+  cover: data.cover || {
+    ForMen: 0,
+    ForWomen: 0,
+    WorkingWithUs: 0,
+    Regular: 0,
+    ForFEU: 0,
+  },
+  principalImage: data.principalImage || '/PenroseTriangle.png',
+  typeOfMusicPlayed: data.typeOfMusicPlayed || '',
+  time: data.time || {
+    continuesEventsStartDay: null,
+    continuesEventsEndDay: null,
+    weekDays: null,
+    eventsDays: null,
+    startHour: '19:00',
+    exitHour: '23:00',
+  },
+  contact: data.contact || {
+    phone: '',
+    email: '',
+    whatsApp: '',
+  },
+  exactDirection: {
+    province: data.exactDirection?.province || 'La Habana',
+    placeToSetEvent: data.exactDirection?.placeToSetEvent || 'Unknown Place',
+    googleLink: data.exactDirection?.googleLink || 'https://maps.google.com/',
+  },
+  movieType: data.movieType || '',
+  reviewLink: data.reviewLink || '',
+  description: data.description || 'A new event created for demo purposes.',
+  UserId: userId, // Assuming userId is the organizer
+  messages: [],
+  createdAt: new Date().toISOString(),
+  numberOfMessages: 0,
+  numberOfLikes: 0,
+  numberOfShares: 0,
+  numberOfViews: 0,
+  updatedAt: new Date().toISOString(),
+});
+
+let initialMockServices = [
   {
     _id: 'service1',
     name: 'Web Development Services',
@@ -415,7 +592,27 @@ export const mockServices = [
   },
 ];
 
-export const mockEvents = [
+export const mockServices = initialMockServices.map(service => ({
+  ...createMockService(service, service.ownerId),
+  ...service,
+  exactDirection: {
+    province: service.location.province,
+    placeToSetEvent: service.location.township,
+    googleLink: service.exactDirection?.googleLink,
+  },
+  // Map old review structure to new serviceQualityRating and other ratings
+  serviceQualityRating: service.reviews?.map(review => ({ userId: review.userId, rating: review.rating })) || [],
+  peopleServiceTreatmentRating: service.reviews?.map(review => ({ userId: review.userId, rating: review.rating })) || [],
+  pricingServiceRating: service.reviews?.map(review => ({ userId: review.userId, rating: review.rating })) || [],
+  avgServiceQualityRating: service.rating || 0,
+  avgPeopleServiceTreatmentRating: service.rating || 0,
+  avgPricingServiceRating: service.rating || 0,
+  // Ensure contact details are properly nested under contact
+  contact: service.contact || {},
+  UserId: service.ownerId, // Map ownerId to UserId
+}));
+
+let initialMockEvents = [
   {
     _id: 'event1',
     name: 'Summer Music Festival',
@@ -625,6 +822,26 @@ export const mockEvents = [
     updatedAt: '2024-09-15T16:00:00Z',
   },
 ];
+
+export const mockEvents = initialMockEvents.map(event => ({
+  ...createMockEvent(event, event.organizerId),
+  ...event,
+  // Map old location structure to new exactDirection
+  exactDirection: {
+    province: event.location.province,
+    placeToSetEvent: event.location.address, // Assuming address maps to placeToSetEvent
+    googleLink: event.exactDirection?.googleLink,
+  },
+  // Map old reviews to messages for now (adjust as needed if EventsMessages is for actual comments)
+  messages: event.reviews?.map(review => ({
+    userId: review.userId,
+    username: mockUsers.find(u => u._id === review.userId)?.name || 'Unknown',
+    picture: mockUsers.find(u => u._id === review.userId)?.profilePicture || '',
+    messages: review.comment,
+  })) || [],
+  numberOfMessages: event.reviews?.length || 0,
+  UserId: event.organizerId, // Map organizerId to UserId
+}));
 
 export const mockBusinessOffers = [
   {

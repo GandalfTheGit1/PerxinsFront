@@ -127,7 +127,9 @@ function IndividualPage({serviceOrEvent}) {
         // })
     }
     useEffect(() => {
-        setOpenLoadingBackdrop(true)
+        setOpenLoadingBackdrop(true);
+        console.log('=== IndividualPage useEffect started ===');
+        console.log('Params:', { id, serviceOrEvent });
         // setApiCall("get",`http://localhost:3001/${serviceOrEvent}s/${id}`)
         // .then(response=>{
         //     if(serviceOrEvent === "service"){
@@ -160,14 +162,24 @@ function IndividualPage({serviceOrEvent}) {
         //   )
         //   .catch(()=> setOpenLoadingBackdrop(false))
 
+        // Ensure mock data is initialized
+        console.log('Calling initializeMockData...');
+        initializeMockData();
+        console.log('initializeMockData completed. mockServices length:', mockServices.length, 'mockEvents length:', mockEvents.length);
+
         // Use mock data
         const dataToUse = serviceOrEvent === "service" ? mockServices : mockEvents;
+        console.log('Data to use:', dataToUse.length, 'items for', serviceOrEvent);
         const foundItem = dataToUse.find(item => item._id === id);
+        console.log('Found item for ID', id, ':', foundItem ? 'YES' : 'NO');
+        if (foundItem) {
+            console.log('Found item details:', { name: foundItem.name, type: foundItem.type, description: foundItem.description ? 'Present' : 'Missing' });
+        }
 
         if (foundItem) {
             setIndividualService(foundItem);
             // Simulate rating data if needed
-            setNumberOfUsersRating(foundItem.reviews?.length || 0);
+            setNumberOfUsersRating(foundItem.serviceQualityRating?.length || foundItem.reviews?.length || 0);
             // Simulate availability status based on mock data or a default
             setAvailabilityStatus(true); // Assuming available for demo
         } else {
@@ -175,7 +187,10 @@ function IndividualPage({serviceOrEvent}) {
             // Optionally redirect to a 404 page or handle error
         }
         setOpenLoadingBackdrop(false);
+        console.log('=== useEffect ended ===');
     }, [id, serviceOrEvent])
+    console.log('IndividualPage rendered. Current individualService state:', individualService ? { name: individualService.name, _id: individualService._id, loaded: !!individualService.name } : 'Empty');
+    console.log('IndividualPage rendered. Current individualService state:', individualService ? { name: individualService.name, _id: individualService._id, loaded: !!individualService.name } : 'Empty');
     const searchIcon = (individualService) => {
         let iconsRef = "";
         if(serviceOrEvent==="service"){

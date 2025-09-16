@@ -197,8 +197,12 @@ export const createMockService = (data, userId) => ({
   avgPeopleServiceTreatmentRating: 0,
   avgPricingServiceRating: 0,
   time: data.time || {
-    startDays: 'Monday',
-    endDays: 'Friday',
+    startDays: '2025-09-01', // Example: Start date
+    endDays: '2025-09-05',   // Example: End date
+    weekDays: [1, 2, 3, 4, 5], // Example: Monday to Friday
+    eventsDays: null, // No specific event day for a service by default
+    continuesEventsStartDay: null, // Not a continuous event by default
+    continuesEventsEndDay: null, // Not a continuous event by default
     startHour: '09:00',
     exitHour: '17:00',
   },
@@ -232,10 +236,10 @@ export const createMockEvent = (data, userId) => ({
   principalImage: data.principalImage || '/PenroseTriangle.png',
   typeOfMusicPlayed: data.typeOfMusicPlayed || '',
   time: data.time || {
-    continuesEventsStartDay: null,
-    continuesEventsEndDay: null,
-    weekDays: null,
-    eventsDays: null,
+    continuesEventsStartDay: '2025-10-10',
+    continuesEventsEndDay: '2025-10-15',
+    weekDays: [2, 4], // Example: Tuesday and Thursday
+    eventsDays: '2025-11-20', // Example: Single event day
     startHour: '19:00',
     exitHour: '23:00',
   },
@@ -284,6 +288,12 @@ const defaultMockServicesData = [
     ],
     createdAt: '2024-01-20T11:00:00Z',
     updatedAt: '2024-09-01T15:45:00Z',
+    time: {
+      startDays: '2025-01-01',
+      endDays: '2025-12-31',
+      startHour: '09:00',
+      exitHour: '17:00',
+    },
   },
   {
     _id: 'service2',
@@ -305,6 +315,11 @@ const defaultMockServicesData = [
     ],
     createdAt: '2024-02-15T09:30:00Z',
     updatedAt: '2024-08-10T13:20:00Z',
+    time: {
+      weekDays: [1, 3, 5], // Monday, Wednesday, Friday
+      startHour: '10:00',
+      exitHour: '18:00',
+    },
   },
   {
     _id: 'service3',
@@ -327,6 +342,13 @@ const defaultMockServicesData = [
     ],
     createdAt: '2024-03-01T15:00:00Z',
     updatedAt: '2024-09-05T18:00:00Z',
+    time: {
+      startDays: null,
+      endDays: null,
+      weekDays: [0, 6], // Sunday, Saturday
+      startHour: '08:00',
+      exitHour: '20:00',
+    },
   },
   {
     _id: 'service4',
@@ -348,6 +370,13 @@ const defaultMockServicesData = [
     ],
     createdAt: '2024-04-10T19:00:00Z',
     updatedAt: '2024-09-12T22:15:00Z',
+    time: {
+      startDays: null,
+      endDays: null,
+      weekDays: [0, 1, 2, 3, 4, 5, 6], // Every day
+      startHour: '18:00',
+      exitHour: '02:00',
+    },
   },
   {
     _id: 'service5',
@@ -368,6 +397,13 @@ const defaultMockServicesData = [
     ],
     createdAt: '2024-05-01T10:30:00Z',
     updatedAt: '2024-07-30T16:45:00Z',
+    time: {
+      startDays: '2025-01-01',
+      endDays: '2025-12-31',
+      weekDays: [1, 2, 3, 4, 5], // Monday to Friday
+      startHour: '09:00',
+      exitHour: '17:00',
+    },
   },
   {
     _id: 'service6',
@@ -388,6 +424,13 @@ const defaultMockServicesData = [
     ],
     createdAt: '2024-06-01T17:00:00Z',
     updatedAt: '2024-09-08T19:30:00Z',
+    time: {
+      startDays: null,
+      endDays: null,
+      weekDays: [0, 1, 2, 3, 4, 5, 6], // Every day
+      startHour: '11:00',
+      exitHour: '22:00',
+    },
   },
   {
     _id: 'service7',
@@ -408,6 +451,13 @@ const defaultMockServicesData = [
     ],
     createdAt: '2024-07-01T14:00:00Z',
     updatedAt: '2024-08-25T10:15:00Z',
+    time: {
+      startDays: null,
+      endDays: null,
+      weekDays: [1, 2, 3, 4], // Monday to Thursday
+      startHour: '15:00',
+      exitHour: '19:00',
+    },
   },
   {
     _id: 'service8',
@@ -429,6 +479,13 @@ const defaultMockServicesData = [
     ],
     createdAt: '2024-08-01T08:00:00Z',
     updatedAt: '2024-09-13T11:00:00Z',
+    time: {
+      startDays: '2025-01-01',
+      endDays: '2025-03-31',
+      weekDays: null,
+      startHour: '07:00',
+      exitHour: '10:00',
+    },
   },
 ];
 
@@ -458,7 +515,6 @@ const defaultMockEventsData = [
     name: 'Summer Music Festival',
     description: 'An annual music festival featuring local and international artists across various genres. Food trucks, art installations, and good vibes!',
     date: '2025-08-15',
-    time: '14:00',
     location: { province: 'La Habana', township: 'Playa', address: 'Central Park' }, // Old field, will be mapped
     category: 'Concert',
     typeOfMusicPlayed: 'Pop',
@@ -475,13 +531,17 @@ const defaultMockEventsData = [
     ],
     createdAt: '2024-01-10T12:00:00Z',
     updatedAt: '2024-09-14T10:00:00Z',
+    time: {
+      eventsDays: '2025-08-15',
+      startHour: '14:00',
+      exitHour: '22:00',
+    },
   },
   {
     _id: 'event2',
     name: 'Tech Innovators Conference',
     description: 'A two-day conference for tech enthusiasts, developers, and entrepreneurs. Featuring keynote speakers, workshops, and networking opportunities.',
     date: '2025-09-20',
-    time: '09:00',
     location: { province: 'La Habana', township: 'Vedado', address: 'Convention Center' }, // Old field, will be mapped
     category: 'Conference',
     typeOfMusicPlayed: 'N/A',
@@ -498,13 +558,18 @@ const defaultMockEventsData = [
     ],
     createdAt: '2024-02-05T11:30:00Z',
     updatedAt: '2024-09-10T14:45:00Z',
+    time: {
+      continuesEventsStartDay: '2025-09-20',
+      continuesEventsEndDay: '2025-09-21',
+      startHour: '09:00',
+      exitHour: '17:00',
+    },
   },
   {
     _id: 'event3',
     name: 'Local Art Exhibition',
     description: 'Showcasing the works of emerging local artists. A diverse collection of paintings, sculptures, and digital art.',
     date: '2025-10-05',
-    time: '18:00',
     location: { province: 'Matanzas', township: 'Varadero', address: 'Art Gallery Downtown' }, // Old field, will be mapped
     category: 'Exhibition',
     typeOfMusicPlayed: 'Jazz',
@@ -521,13 +586,17 @@ const defaultMockEventsData = [
     ],
     createdAt: '2024-03-15T17:00:00Z',
     updatedAt: '2024-08-30T20:15:00Z',
+    time: {
+      eventsDays: '2025-10-05',
+      startHour: '18:00',
+      exitHour: '23:00',
+    },
   },
   {
     _id: 'event4',
     name: 'Beach Party',
     description: 'Fun beach party with DJ, games, and sunset views.',
     date: '2025-07-30',
-    time: '18:00',
     location: { province: 'Matanzas', township: 'Varadero', address: 'Varadero Beach' }, // Old field, will be mapped
     category: 'Party',
     typeOfMusicPlayed: 'Hip Hop',
@@ -544,13 +613,17 @@ const defaultMockEventsData = [
     ],
     createdAt: '2024-04-20T18:30:00Z',
     updatedAt: '2024-09-11T22:00:00Z',
+    time: {
+      eventsDays: '2025-07-30',
+      startHour: '18:00',
+      exitHour: '00:00',
+    },
   },
   {
     _id: 'event5',
     name: 'Jazz Night',
     description: 'Live jazz performance in an intimate venue.',
     date: '2025-11-10',
-    time: '20:00',
     location: { province: 'La Habana', township: 'Centro Habana', address: 'Jazz Club' }, // Old field, will be mapped
     category: 'Concert',
     typeOfMusicPlayed: 'Jazz',
@@ -565,13 +638,17 @@ const defaultMockEventsData = [
     reviews: [],
     createdAt: '2024-05-10T19:45:00Z',
     updatedAt: '2024-09-13T20:30:00Z',
+    time: {
+      eventsDays: '2025-11-10',
+      startHour: '20:00',
+      exitHour: '23:00',
+    },
   },
   {
     _id: 'event6',
     name: 'Workshop: Digital Marketing',
     description: 'Hands-on workshop on digital marketing strategies.',
     date: '2025-12-05',
-    time: '10:00',
     location: { province: 'La Habana', township: 'Miramar', address: 'Conference Room' }, // Old field, will be mapped
     category: 'Workshop',
     typeOfMusicPlayed: 'N/A',
@@ -588,13 +665,18 @@ const defaultMockEventsData = [
     ],
     createdAt: '2024-06-15T09:00:00Z',
     updatedAt: '2024-09-12T12:45:00Z',
+    time: {
+      continuesEventsStartDay: '2025-12-05',
+      continuesEventsEndDay: '2025-12-06',
+      startHour: '10:00',
+      exitHour: '17:00',
+    },
   },
   {
     _id: 'event7',
     name: 'Noche de Cine Clásico',
     description: 'Proyección de películas clásicas en el Cine Yara, con debate posterior.',
     date: '2025-10-20',
-    time: '19:00',
     location: { province: 'La Habana', township: 'Vedado', address: 'Cine Yara' }, // Old field, will be mapped
     category: 'Concert',
     typeOfMusicPlayed: 'N/A',
@@ -611,6 +693,11 @@ const defaultMockEventsData = [
     ],
     createdAt: '2024-09-15T15:00:00Z',
     updatedAt: '2024-09-15T16:00:00Z',
+    time: {
+      eventsDays: '2025-10-20',
+      startHour: '19:00',
+      exitHour: '22:00',
+    },
   },
 ];
 

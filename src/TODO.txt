@@ -1,2 +1,5 @@
-TODO> Fix TODO to make eventos
-TODO> Fix 
+TODO> Fix Likes to allow to create them normally in DEMO, whith the demos registration
+TODO> Fix Comments to create coments normally
+TODO> Fix Creating Event / Local
+TODO, check for profile Update and Delete Events and Locals
+TODO> dates don't work for card

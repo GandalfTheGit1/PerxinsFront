@@ -36,24 +36,44 @@ const eventsDaysRendering = (props) =>{
     continuesEventsEndDay 
   } = props;
 
-  if( continuesEventsEndDay) {
-    return <>
-    <div style={{width: "55px"}}>
-      <span>{new Date(continuesEventsStartDay).getDate()} </span>
-      /
-      <span> {new Date(continuesEventsEndDay).getDate()}</span>
-    </div>
-    <p>{months[new Date(continuesEventsEndDay).getMonth()]}</p>
-    </>
+  if( continuesEventsEndDay && continuesEventsStartDay) {
+    const startDate = new Date(continuesEventsStartDay);
+    const endDate = new Date(continuesEventsEndDay);
+    return (
+      <>
+        <div style={{width: "55px"}}>
+          <span>{startDate.getDate()} </span>
+          /
+          <span> {endDate.getDate()}</span>
+        </div>
+        <p>{months[endDate.getMonth()]}</p>
+      </>
+    )
   }
-    if(startDays){
-      return <><span>{startDays}</span><span>-</span><span>{endDays}</span></>
-    }
     if(eventsDays){
       return eventsDaysFormate(eventsDays)
     }
-    if(weekDay){
-      return <div className="d-f f-d-c"><span style={{fontSize: "10px"}}>CADA</span> <span>{weekDay[+weekDays]}</span></div>
+    if(startDays && endDays){
+      const startDate = new Date(startDays);
+      const endDate = new Date(endDays);
+      return (
+        <>
+          <span>{startDate.getDate()}</span>
+          <span>-</span>
+          <span>{endDate.getDate()}</span>
+          <p>{months[endDate.getMonth()]}</p>
+        </>
+      )
+    }
+    if(weekDays && weekDays.length > 0){
+      return (
+        <div className="d-f f-d-c">
+          <span style={{fontSize: "10px"}}>CADA</span> 
+          {weekDays.map((day, index) => (
+            <span key={index}>{weekDay[+day]}</span>
+          ))}
+        </div>
+      )
     }
   }
 export default eventsDaysRendering;

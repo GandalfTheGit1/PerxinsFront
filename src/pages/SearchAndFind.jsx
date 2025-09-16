@@ -192,26 +192,24 @@ function SearchAndFind({ likesUrl, apiURL, serviceOrEvent, query, setQuery}) {
     }
     console.log('Liking', serviceId, 'for user', authState._id, 'type', serviceOrEvent);
     try {
-      // Always like for demo: get from mock, increment
       const itemService = serviceOrEvent === 'service' ? services : events;
       const item = await itemService.getById(serviceId);
-      const currentLikes = item.numberOfLikes || 0;
-      const newLikes = currentLikes + 1;
-      item.numberOfLikes = newLikes;
-      itemService.saveData();
-      // Dispatch new count to Redux
-      const payload = { serviceId, serviceLikes: newLikes };
-      if (serviceOrEvent === 'service') {
-        dispatch(changeLikeServices(payload));
+      
+      // Create a mutable copy of the item
+      const mutableItem = { ...item };
+
+      // Find existing like in mockLikes for the current user and item
+      const existingLikeIndex = mockLikes.findIndex(l => l.userId === authState._id && (l.serviceId === serviceId || l.eventId === serviceId));
+      let newLikes = mutableItem.numberOfLikes || 0;
+      let isLiking = false;
+
+      if (existingLikeIndex !== -1) {
+        // If a like exists, it's an unlike operation
+        mockLikes.splice(existingLikeIndex, 1); // Remove the like entry
+        newLikes--;
+        setLikedServices(prev => prev.filter(id => id !== serviceId)); // Remove from likedServices state
       } else {
-        dispatch(changeLikeEvents(payload));
-      }
-      // Ensure in likedServices for icon
-      setLikedServices(prev => prev.includes(serviceId) ? prev : [...prev, serviceId]);
-      // Add like entry if not exists
-      const likesService = new MockService('likes');
-      const existing = likesService.data.find(l => l.userId === authState._id && (l.serviceId === serviceId || l.eventId === serviceId));
-      if (!existing) {
+        // If no like exists, it's a like operation
         const newLike = {
           _id: `like_${Date.now()}`,
           userId: authState._id,
@@ -219,12 +217,27 @@ function SearchAndFind({ likesUrl, apiURL, serviceOrEvent, query, setQuery}) {
           liked: true,
           createdAt: new Date().toISOString(),
         };
-        likesService.data.push(newLike);
-        likesService.saveData();
+        mockLikes.push(newLike);
+        newLikes++;
+        isLiking = true;
+        setLikedServices(prev => [...prev, serviceId]); // Add to likedServices state
       }
-      // Notify owner if different
-      const ownerId = item.ownerId || item.organizerId;
-      if (ownerId && ownerId !== authState._id) {
+      
+      mutableItem.numberOfLikes = newLikes; // Update item's like count
+      itemService.saveData(); // Persist item changes
+      likes.saveData(); // Persist mockLikes changes
+
+      // Dispatch new count to Redux
+      const payload = { serviceId, serviceLikes: newLikes };
+      if (serviceOrEvent === 'service') {
+        dispatch(changeLikeServices(payload));
+      } else {
+        dispatch(changeLikeEvents(payload));
+      }
+      
+      // Notify owner if different (only on liking)
+      const ownerId = item.UserId; // Use item.UserId for consistency
+      if (isLiking && ownerId && ownerId !== authState._id) {
         const notificationsService = new MockService('notifications');
         const newNotif = {
           _id: `notif_${Date.now()}`,
@@ -238,7 +251,7 @@ function SearchAndFind({ likesUrl, apiURL, serviceOrEvent, query, setQuery}) {
         notificationsService.data.unshift(newNotif);
         notificationsService.saveData();
       }
-      console.log('Like added for', serviceOrEvent, { numberOfLikes: newLikes });
+      console.log('Like toggled for', serviceOrEvent, { numberOfLikes: newLikes, isLiking });
     } catch (error) {
       console.error('Like error:', error);
       setLoginError(true);

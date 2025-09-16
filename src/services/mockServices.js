@@ -89,6 +89,39 @@ class MockService {
         localStorage.setItem(`mock_users`, JSON.stringify(mockUsers));
       }
       this.addNotification(currentUserId, `New event '${newItem.name}' created!`, newItem._id);
+    } else if (this.entity === 'messages') {
+      const user = mockUsers.find(u => u._id === data.userId); // Assuming userId is passed in data
+      if (!user) throw new Error('User not found for comment');
+      
+      newItem = {
+        _id: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        userId: data.userId,
+        username: user.name,
+        picture: user.profilePicture || '',
+        messages: data.messages,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      
+      // Link message to parent entity (event or service)
+      if (data.eventId) {
+        const eventService = new MockService('events');
+        const event = eventService.data.find(e => e._id === data.eventId);
+        if (event) {
+          event.messages.push(newItem._id);
+          event.numberOfMessages = (event.numberOfMessages || 0) + 1;
+          eventService.saveData();
+        }
+      } else if (data.serviceId) {
+        const serviceService = new MockService('services');
+        const service = serviceService.data.find(s => s._id === data.serviceId);
+        if (service) {
+          service.messages.push(newItem._id);
+          service.numberOfMessages = (service.numberOfMessages || 0) + 1;
+          serviceService.saveData();
+        }
+      }
+      this.addNotification(user._id, `New comment posted by ${user.name}!`, newItem._id);
     } else {
       newItem = { ...data, _id: `mock_${this.entity}_${Date.now()}`, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
     }
